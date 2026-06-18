@@ -45,11 +45,11 @@ export function WhatsappButton() {
       aria-label="Fala com a gente no WhatsApp"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="fixed bottom-5 right-5 z-[60] flex items-center gap-2 rounded-full bg-[#25D366] py-2 pl-2 pr-2 text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-300 hover:brightness-105 md:bottom-6 md:right-6"
+      className="fixed bottom-5 right-5 z-[60] flex items-center rounded-full bg-[#25D366] py-2 pl-2 pr-2 text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-300 hover:brightness-105 md:bottom-6 md:right-6"
     >
       <span
         className={`overflow-hidden whitespace-nowrap text-[14px] font-bold transition-all duration-300 ${
-          showPill ? "max-w-[160px] pl-2 opacity-100" : "max-w-0 pl-0 opacity-0"
+          showPill ? "max-w-[160px] pl-2 pr-2 opacity-100" : "max-w-0 pl-0 pr-0 opacity-0"
         }`}
       >
         Fala com a gente
