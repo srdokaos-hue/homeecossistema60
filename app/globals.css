@@ -1,0 +1,298 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   60 MINUTOS ESCAPE GAME — Sistema de Design
+   ============================================================ */
+
+/* Fontes — bloco @theme NÃO-inline para emitir variáveis CSS reais
+   (utilitários como .font-display consomem var(--font-display)) */
+@theme {
+  --font-display: var(--font-anton), 'Impact', sans-serif;
+  --font-sans: var(--font-montserrat), ui-sans-serif, sans-serif;
+  --font-heading: var(--font-anton), sans-serif;
+}
+
+@theme inline {
+  /* Cores da marca (tokens exatos) */
+  --color-void: #0a0a0a;
+  --color-carbon: #16161a;
+  --color-blood: #e11c24;
+  --color-blood-dark: #a3151b;
+  --color-gold: #d4af37;
+  --color-cream: #f4f2ec;
+  --color-ash: #b8b8c0;
+
+  /* Tokens shadcn mapeados para o tema escuro da marca */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+:root {
+  --radius: 0.875rem;
+
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --card: #16161a;
+  --card-foreground: #ffffff;
+  --popover: #16161a;
+  --popover-foreground: #ffffff;
+  --primary: #e11c24;
+  --primary-foreground: #ffffff;
+  --secondary: #16161a;
+  --secondary-foreground: #ffffff;
+  --muted: #16161a;
+  --muted-foreground: #b8b8c0;
+  --accent: #d4af37;
+  --accent-foreground: #0a0a0a;
+  --destructive: #e11c24;
+  --border: rgba(212, 175, 55, 0.18);
+  --input: rgba(212, 175, 55, 0.25);
+  --ring: #d4af37;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  /* Foco visível dourado */
+  *:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    line-height: 0.95;
+  }
+
+  /* Eyebrow: linha dourada + label */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+  .eyebrow::before {
+    content: '';
+    width: 28px;
+    height: 2px;
+    background: var(--color-gold);
+    display: inline-block;
+  }
+  .eyebrow--center::after {
+    content: '';
+    width: 28px;
+    height: 2px;
+    background: var(--color-gold);
+    display: inline-block;
+  }
+
+  /* Animação fade-up ao entrar no viewport */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.5s ease-out,
+      transform 0.5s ease-out;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Flutuação dos recortes (prova social) */
+  @keyframes floaty {
+    0%,
+    100% {
+      transform: translateY(-6px);
+    }
+    50% {
+      transform: translateY(6px);
+    }
+  }
+  .floaty {
+    animation: floaty 7s ease-in-out infinite;
+  }
+  .floaty-delay-1 {
+    animation-delay: -2.3s;
+    animation-duration: 8s;
+  }
+  .floaty-delay-2 {
+    animation-delay: -4.6s;
+    animation-duration: 6.5s;
+  }
+
+  /* Pulso suave no botão de play */
+  @keyframes soft-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(225, 28, 36, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 0 14px rgba(225, 28, 36, 0);
+    }
+  }
+  .soft-pulse {
+    animation: soft-pulse 2.4s ease-in-out infinite;
+  }
+
+  /* Scroll snap mobile do catálogo */
+  .snap-x-mandatory {
+    scroll-snap-type: x mandatory;
+  }
+  .snap-start {
+    scroll-snap-align: start;
+  }
+
+  /* Esconder scrollbar do carrossel */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Recorte com bordas suavizadas (feather) */
+  .feather-mask {
+    -webkit-mask-image: radial-gradient(
+      ellipse 78% 88% at 50% 42%,
+      #000 60%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 78% 88% at 50% 42%,
+      #000 60%,
+      transparent 100%
+    );
+  }
+
+  /* Cryptex: dissolve o fundo claro da foto no hero escuro */
+  .cryptex-mask {
+    -webkit-mask-image: radial-gradient(
+      ellipse 60% 38% at 50% 50%,
+      #000 48%,
+      rgba(0, 0, 0, 0.6) 66%,
+      transparent 82%
+    );
+    mask-image: radial-gradient(
+      ellipse 60% 38% at 50% 50%,
+      #000 48%,
+      rgba(0, 0, 0, 0.6) 66%,
+      transparent 82%
+    );
+  }
+
+  /* Curvatura do anel gravado em cada rodinha do cryptex */
+  .reel-curve {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 30%,
+      #000 70%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 30%,
+      #000 70%,
+      transparent 100%
+    );
+  }
+
+  .cryptex-shake {
+    animation: cryptex-shake 0.12s linear 0s 8;
+  }
+
+  /* Fade + slide ao trocar de loja no leque dos Kings */
+  @keyframes fan-in {
+    0% {
+      opacity: 0;
+      transform: translateY(10px) scale(0.985);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  .fan-in {
+    animation: fan-in 0.45s ease-out;
+  }
+}
+
+@keyframes cryptex-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-1.5px, 1px);
+  }
+  50% {
+    transform: translate(1.5px, -1px);
+  }
+  75% {
+    transform: translate(-1px, -1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floaty,
+  .soft-pulse,
+  .cryptex-shake,
+  .fan-in {
+    animation: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
