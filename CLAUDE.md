@@ -17,6 +17,7 @@ O projeto começou prototipado no v0.dev (Vercel) com iteração visual via chat
 - `/docs/guia_identidade_visual_60min.md` — guia de marca em linguagem não-técnica, pra peças de redes sociais
 - `/docs/handoff_60minutos_v3.md` — handoff da fase mais recente, com pendências em ordem de prioridade
 - `/docs/metodologia_desenvolvimento.md` — COMO trabalhamos (SDD, fases, anti-AI-slop). Seguir sempre.
+- `/docs/salas-page-decisoes-v1.md` — decisões da página /salas (filtro, card novo, navegação, atmosfera pendente)
 
 ## Metodologia de trabalho (resumo — detalhe em /docs/metodologia_desenvolvimento.md)
 Fluxo SDD por feature: ETAPA 1 Pesquisa (`docs/specs/<feature>/prd.md`) → `/clear` → ETAPA 2 Spec (`docs/specs/<feature>/spec.md`) → `/clear` → ETAPA 3 Implementação arquivo por arquivo → `/review` antes do deploy.
