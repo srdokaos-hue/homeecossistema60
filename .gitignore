@@ -17,3 +17,6 @@ node_modules
 
 # Arquivos zip (cartazes, exports) não vão pro repo
 *.zip
+
+# Gerado pelo Next.js a cada build — não versionar
+next-env.d.ts

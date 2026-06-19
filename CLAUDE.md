@@ -16,6 +16,15 @@ O projeto começou prototipado no v0.dev (Vercel) com iteração visual via chat
 - `/docs/spec_filtro_decisoes_v1.md` — spec do filtro de salas + histórico de decisões/prompts já usados
 - `/docs/guia_identidade_visual_60min.md` — guia de marca em linguagem não-técnica, pra peças de redes sociais
 - `/docs/handoff_60minutos_v3.md` — handoff da fase mais recente, com pendências em ordem de prioridade
+- `/docs/metodologia_desenvolvimento.md` — COMO trabalhamos (SDD, fases, anti-AI-slop). Seguir sempre.
+
+## Metodologia de trabalho (resumo — detalhe em /docs/metodologia_desenvolvimento.md)
+Fluxo SDD por feature: ETAPA 1 Pesquisa (`docs/specs/<feature>/prd.md`) → `/clear` → ETAPA 2 Spec (`docs/specs/<feature>/spec.md`) → `/clear` → ETAPA 3 Implementação arquivo por arquivo → `/review` antes do deploy.
+- Manter janela de contexto abaixo de 40-50%. O agente não roda `/clear` sozinho: avisa "hora de dar /clear" nas viradas de fase; o gatilho é do Erickson.
+- Parar e pedir validação a cada subetapa. Nunca criar arquivo de código nem instalar pacote sem autorização expressa.
+- Anti-AI-slop: nada de gradiente roxo/fundo branco, nada de fonte de sistema (Inter/Roboto/Arial). Tipografia marcante (Anton+Montserrat já atende), animação com propósito.
+- Cor: usar tokens do `app/globals.css` (utilitários Tailwind `bg-void`, `text-gold`, etc.), nunca hex avulso em código novo. Exceção: verde WhatsApp `#25D366` (marca externa). Migração dos ~12 hex legados fica pra fase de refino.
+- `/code-review ultra` (ex-`/ultrareview`) é cobrado e disparado só pelo Erickson — o agente não lança sozinho.
 
 ## Regras fechadas — NÃO reabrir sem o Erickson confirmar explicitamente
 - Paleta: Void `#0A0A0A`, Blood `#E11C24`, Cream `#F4F2EC`, Gold `#D4AF37` (dourado é tempero: ~6% máx da composição visual, nunca cor dominante)
@@ -25,7 +34,7 @@ O projeto começou prototipado no v0.dev (Vercel) com iteração visual via chat
 - "A MAIS JOGADA" é badge exclusivo do Cativeiro
 - Cryptex (elemento circular de countdown no hero) foi removido — não reintroduzir sem decisão nova
 - Kings of the Escape é carrossel por LOJA (não 3 cards fixos), com leque de tamanho proporcional ao nº de salas por loja: Píer 21 = 7, ParkShopping = 7, Santa Úrsula = 6, Taguatinga = 2
-- SEO híbrido: rotas `/salas/[slug]` (sala em todas as unidades) + `/unidades/[slug]/[sala]` (sala específica de uma loja)
+- SEO híbrido (4 rotas, decisão fechada PRD §30A.2): `/salas/[sala]` (sala em todas as unidades) + `/salas/[sala]/[unidade]` (variante numa unidade) + `/unidades/[unidade]` (unidade com todas as salas) + `/unidades/[unidade]/[sala]` (intersecção: + calendário + preço local). Canonical das variantes aponta pra página-mãe da sala. Slugs de unidade: `pier-21`, `parkshopping`, `taguatinga-shopping`, `santa-ursula`
 - Vitrine da home mostra 8 salas; catálogo completo (16) é página `/salas` dedicada — ainda não criada
 - WhatsApp flutuante: ícone único, número é placeholder ainda (`5500000000000` em `components/whatsapp-button.tsx`)
 
