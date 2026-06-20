@@ -57,6 +57,11 @@ Assets já no projeto: `/public/posters/` (16 pôsteres com nomes em kebab-case)
 7. **[ERICKSON] Decidir onde aplicar o slogan "Sempre há uma saída"**.
 8. **[FUTURO] Cartazes verticais 2:3 via IA** para K13, Museu, FNAF (Cativeiro está sendo refeito agora).
 9. **[PRD] Aplicar todos os deltas já registrados em `spec_filtro_decisoes_v1.md`** ao PRD principal (parcialmente já feito na v1.3).
+10. **[FUTURO] Reavaliar o plugin GSD na fase de backend.** Contexto (decidido em 20/06/2026, sobre as "skills obrigatórias" do PRD §3.3):
+    - **frontend-design** (Anthropic): instalado, vendorado em `.claude/skills/frontend-design/SKILL.md`. Auto-ativa em trabalho de UI, reforça §4.1 anti-AI-slop. Sem conflito.
+    - **`/review` + `/code-review ultra`**: já nativos (a linha "/review e /ultrareview" do §3.3 está desatualizada).
+    - **Superpowers**: **descartado pra este projeto** — núcleo é TDD (test-first) e o site é institucional, visual, sem suíte de testes; seus comandos (`/brainstorm`, `/write-plan`...) competem com a SDD já decidida.
+    - **GSD**: é praticamente a metodologia SDD do Erickson já formalizada em tooling (orquestrador + subagentes por tarefa + memória persistente). Por isso NÃO instalar agora como adição (duplicaria a fonte de verdade prd.md/spec.md e os comandos). Faz sentido só como **substituição** da SDD manual, e isso é "mudar o que foi decidido" — pausado. **Gatilho pra reabrir:** quando entrarem features de backend complexas do PRD (lobby, pagamentos, CRM) e o `/clear` + specs manuais começarem a pesar. Aí: teste isolado do GSD, comparar com o fluxo atual, decidir trocar ou não. Comandos de instalação dos dois ficaram registrados na conversa.
 
 ## ARQUIVOS PRA TER EM MÃOS NO NOVO CHAT
 

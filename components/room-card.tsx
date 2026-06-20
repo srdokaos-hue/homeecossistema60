@@ -2,43 +2,7 @@ import Image from "next/image"
 import { MapPin } from "lucide-react"
 import { roomHasTag, UNIT_LABELS, type Room, type RoomTag } from "@/data/rooms"
 import { DifficultyMeter } from "@/components/difficulty-meter"
-
-function AgeBadge({ age }: { age: Room["age"] }) {
-  if (age === "Livre") {
-    return (
-      <span className="rounded-full bg-[var(--color-gold)] px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.08em] text-[#3a2e08]">
-        Livre
-      </span>
-    )
-  }
-  return (
-    <span className="rounded-full border border-[rgba(225,28,36,0.5)] bg-[rgba(10,10,10,0.7)] px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.08em] text-[#ff5a5f] backdrop-blur-sm">
-      12 Anos
-    </span>
-  )
-}
-
-function DualGameBadge() {
-  return (
-    <span
-      className="flex items-center rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.06em] text-white"
-      style={{
-        background:
-          "linear-gradient(110deg, var(--color-blood) 0%, var(--color-blood) 48%, #1B4FE1 52%, #1B4FE1 100%)",
-      }}
-    >
-      2 Jogos em 1
-    </span>
-  )
-}
-
-function TopPlayedBadge() {
-  return (
-    <span className="rounded-full bg-[var(--color-gold)] px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.08em] text-[#3a2e08] shadow-[0_2px_10px_rgba(212,175,55,0.4)]">
-      A Mais Jogada
-    </span>
-  )
-}
+import { AgeBadge, DualGameBadge, TopPlayedBadge } from "@/components/room-badges"
 
 /** até 2 tags-atalho pequenas exibidas no card */
 const DISPLAY_TAGS: RoomTag[] = ["Pra família", "Não assusta"]

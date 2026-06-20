@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Eyebrow, SectionTitle } from "@/components/section-heading"
@@ -9,6 +10,8 @@ interface Plan {
   perTicket: number
   total: number
   pin: string
+  /** cor de identidade do tier (usada na borda, glow, anel e botão) */
+  accent: string
   popular?: boolean
 }
 
@@ -20,6 +23,7 @@ const PLANS: Plan[] = [
     perTicket: 69.9,
     total: 209.7,
     pin: "/prime/pin-ouro.png",
+    accent: "var(--color-gold)",
   },
   {
     name: "Elite",
@@ -28,6 +32,7 @@ const PLANS: Plan[] = [
     perTicket: 39.9,
     total: 957.6,
     pin: "/prime/pin-elite.png",
+    accent: "var(--color-blood)",
     popular: true,
   },
   {
@@ -37,6 +42,7 @@ const PLANS: Plan[] = [
     perTicket: 59.9,
     total: 599.0,
     pin: "/prime/pin-platina.png",
+    accent: "var(--color-platina)",
   },
 ]
 
@@ -74,21 +80,22 @@ export function PrimePlans() {
           {PLANS.map((plan) => (
             <div
               key={plan.name}
+              style={{ "--accent": plan.accent } as CSSProperties}
               className={cn(
                 "relative flex flex-col items-center gap-5 rounded-[18px] border p-7 text-center transition-transform",
                 plan.popular
-                  ? "z-10 border-[var(--color-gold)] bg-[var(--color-carbon)] shadow-[0_30px_70px_-25px_rgba(212,175,55,0.5)] md:-translate-y-6 md:scale-[1.05]"
-                  : "border-[rgba(212,175,55,0.16)] bg-[var(--color-void)]/40",
+                  ? "z-10 border-[var(--accent)] bg-[var(--color-carbon)] shadow-[0_30px_70px_-25px_rgba(225,28,36,0.5)] md:-translate-y-6 md:scale-[1.05]"
+                  : "border-[color-mix(in_srgb,var(--accent)_20%,transparent)] bg-[var(--color-void)]/40",
               )}
             >
-              {/* glow dourado radial atrás do card Elite */}
-              {plan.popular && (
-                <div
-                  className="pointer-events-none absolute -inset-6 -z-10 rounded-[40px] opacity-30 blur-3xl"
-                  style={{ background: "var(--color-gold)" }}
-                  aria-hidden="true"
-                />
-              )}
+              {/* glow radial na cor do tier (mais forte no Elite/popular) */}
+              <div
+                className={cn(
+                  "pointer-events-none absolute -inset-6 -z-10 rounded-[40px] bg-[var(--accent)] blur-3xl",
+                  plan.popular ? "opacity-30" : "opacity-15",
+                )}
+                aria-hidden="true"
+              />
 
               {plan.popular && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[var(--color-gold)] px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.1em] text-[#3a2e08]">
@@ -97,7 +104,7 @@ export function PrimePlans() {
               )}
 
               {/* slot de pin oficial do plano */}
-              <span className="flex size-16 items-center justify-center rounded-full border border-[rgba(212,175,55,0.3)] bg-[var(--color-void)]/60 p-1">
+              <span className="flex size-16 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--accent)_30%,transparent)] bg-[var(--color-void)]/60 p-1">
                 <Image
                   src={plan.pin || "/placeholder.svg"}
                   alt={`Pin do plano ${plan.name}`}
@@ -144,7 +151,7 @@ export function PrimePlans() {
                   "mt-auto flex h-12 w-full items-center justify-center rounded-full text-[12px] font-bold uppercase tracking-[0.06em] transition-colors",
                   plan.popular
                     ? "bg-[var(--color-blood)] text-white hover:bg-[var(--color-blood-dark)]"
-                    : "border-[1.5px] border-[var(--color-gold)] text-[var(--color-gold)] hover:bg-[rgba(212,175,55,0.08)]",
+                    : "border-[1.5px] border-[var(--accent)] text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_8%,transparent)]",
                 )}
               >
                 Assinar {plan.name}

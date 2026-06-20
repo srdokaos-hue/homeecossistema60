@@ -1,31 +1,27 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { ArrowRight } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+import {
+  GENRES,
+  rooms,
+  roomHasTag,
+  TAGS,
+  UNIT_LABELS,
+  UNITS,
+  type RoomGenre,
+  type RoomTag,
+} from "@/data/rooms"
+import { matchesBase, roomsByGenreOrder } from "@/lib/room-filters"
+import { Eyebrow, SectionTitle } from "@/components/section-heading"
+import { RoomCardResponsive } from "@/components/room-card-responsive"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select"
-import {
-  GENRES,
-  HOME_SHOWCASE_ORDER,
-  rooms,
-  roomHasTag,
-  TAGS,
-  UNIT_LABELS,
-  UNITS,
-  type Room,
-  type RoomGenre,
-  type RoomTag,
-} from "@/data/rooms"
-import { matchesBase } from "@/lib/room-filters"
-import { Eyebrow, SectionTitle } from "@/components/section-heading"
-import { RoomCardResponsive } from "@/components/room-card-responsive"
 import { cn } from "@/lib/utils"
-
-const SHOWCASE_LIMIT = 8
 
 const PLAYER_OPTIONS = [
   { value: "all", label: "Nº de jogadores" },
@@ -34,21 +30,54 @@ const PLAYER_OPTIONS = [
   { value: "6", label: "6+ jogadores" },
 ]
 
-export function RoomCatalog() {
-  const [genres, setGenres] = useState<RoomGenre[]>([])
+export function RoomCatalogFull() {
+  const router = useRouter()
+  const params = useSearchParams()
+
+  // Estado inicial vindo da URL (gênero/unidade/dificuldade); tags e jogadores só local
+  const [genres, setGenres] = useState<RoomGenre[]>(
+    () => (params.get("genero")?.split(",").filter(Boolean) ?? []) as RoomGenre[],
+  )
+  const [unit, setUnit] = useState<string>(() => params.get("unidade") ?? "all")
+  const [difficulty] = useState<number | null>(() =>
+    params.get("dificuldade") ? Number(params.get("dificuldade")) : null,
+  )
   const [tags, setTags] = useState<RoomTag[]>([])
-  const [unit, setUnit] = useState<string>("all")
   const [players, setPlayers] = useState<string>("all")
 
+  /** Reflete gênero/unidade/dificuldade na URL sem empilhar histórico nem rolar */
+  function syncUrl(next: {
+    genres?: RoomGenre[]
+    unit?: string
+    difficulty?: number | null
+  }) {
+    const g = next.genres ?? genres
+    const u = next.unit ?? unit
+    const d = next.difficulty ?? difficulty
+    const sp = new URLSearchParams()
+    if (g.length) sp.set("genero", g.join(","))
+    if (u !== "all") sp.set("unidade", u)
+    if (d != null) sp.set("dificuldade", String(d))
+    const qs = sp.toString()
+    router.replace(qs ? `/salas?${qs}` : "/salas", { scroll: false })
+  }
+
   function toggleGenre(g: RoomGenre) {
-    setGenres((prev) =>
-      prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g],
-    )
+    const nextGenres = genres.includes(g)
+      ? genres.filter((x) => x !== g)
+      : [...genres, g]
+    setGenres(nextGenres)
+    syncUrl({ genres: nextGenres })
   }
   function toggleTag(t: RoomTag) {
     setTags((prev) =>
       prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t],
     )
+  }
+  function changeUnit(u: string | null) {
+    const next = u ?? "all"
+    setUnit(next)
+    syncUrl({ unit: next })
   }
 
   // Contadores: respeitam os demais filtros ativos, ignorando a própria dimensão
@@ -60,13 +89,13 @@ export function RoomCatalog() {
         rooms.filter(
           (r) =>
             r.genre === g &&
-            matchesBase(r, [], tags, players) &&
+            matchesBase(r, [], tags, players, difficulty) &&
             (unit === "all" || r.units.includes(unit)),
         ).length,
       )
     }
     return map
-  }, [tags, players, unit])
+  }, [tags, players, unit, difficulty])
 
   const tagCounts = useMemo(() => {
     const map = new Map<RoomTag, number>()
@@ -76,13 +105,13 @@ export function RoomCatalog() {
         rooms.filter(
           (r) =>
             roomHasTag(r, t) &&
-            matchesBase(r, genres, [], players) &&
+            matchesBase(r, genres, [], players, difficulty) &&
             (unit === "all" || r.units.includes(unit)),
         ).length,
       )
     }
     return map
-  }, [genres, players, unit])
+  }, [genres, players, unit, difficulty])
 
   const unitCounts = useMemo(() => {
     const map = new Map<string, number>()
@@ -90,49 +119,42 @@ export function RoomCatalog() {
       map.set(
         u,
         rooms.filter(
-          (r) => r.units.includes(u) && matchesBase(r, genres, tags, players),
+          (r) =>
+            r.units.includes(u) &&
+            matchesBase(r, genres, tags, players, difficulty),
         ).length,
       )
     }
     return map
-  }, [genres, tags, players])
+  }, [genres, tags, players, difficulty])
 
   const result = useMemo(() => {
-    const hasAnyFilter =
-      genres.length > 0 || tags.length > 0 || unit !== "all" || players !== "all"
-
-    // Vitrine curada quando nenhum filtro ativo
-    if (!hasAnyFilter) {
-      const ordered = HOME_SHOWCASE_ORDER.map((slug) =>
-        rooms.find((r) => r.slug === slug),
-      ).filter(Boolean) as Room[]
-      return { primary: ordered.slice(0, SHOWCASE_LIMIT), suggestions: [] as Room[] }
-    }
-
-    const base = rooms.filter((r) => matchesBase(r, genres, tags, players))
+    const base = roomsByGenreOrder().filter((r) =>
+      matchesBase(r, genres, tags, players, difficulty),
+    )
     const primary =
       unit === "all" ? base : base.filter((r) => r.units.includes(unit))
 
-    // Regra nunca-zero: se a unidade filtra tudo, sugerir as mesmas salas em outras unidades
+    // Nunca-zero: se a unidade filtra tudo, sugerir as mesmas salas em outras unidades
     const suggestions =
       unit !== "all" && primary.length === 0
         ? base.filter((r) => !r.units.includes(unit))
         : []
 
     return { primary, suggestions }
-  }, [genres, tags, unit, players])
+  }, [genres, tags, unit, players, difficulty])
 
   return (
-    <section id="salas" className="bg-[var(--color-cream)] py-16 md:py-24">
+    <section className="bg-[var(--color-cream)] py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-3">
-          <Eyebrow>Escolha sua aventura</Eyebrow>
+          <Eyebrow>Catálogo completo</Eyebrow>
           <SectionTitle className="text-[var(--color-void)]">
-            {"AS *SALAS* TE ESPERAM"}
+            {"TODAS AS *16 SALAS*"}
           </SectionTitle>
         </div>
 
-        {/* Filtros — linha 1: temas + dropdowns */}
+        {/* Filtros — linha 1: gêneros + dropdowns */}
         <div className="mt-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 no-scrollbar">
             {(GENRES.filter((g) => g !== "Todas") as RoomGenre[]).map((g) => {
@@ -151,7 +173,11 @@ export function RoomCatalog() {
                   )}
                 >
                   {g}{" "}
-                  <span className={active ? "text-white/70" : "text-[var(--color-void)]/40"}>
+                  <span
+                    className={
+                      active ? "text-white/70" : "text-[var(--color-void)]/40"
+                    }
+                  >
                     ({genreCounts.get(g) ?? 0})
                   </span>
                 </button>
@@ -160,10 +186,12 @@ export function RoomCatalog() {
           </div>
 
           <div className="flex gap-2">
-            <Select value={unit} onValueChange={(v) => setUnit(v ?? "all")}>
+            <Select value={unit} onValueChange={changeUnit}>
               <SelectTrigger className="h-10 w-[185px] rounded-full border-[var(--color-void)]/15 bg-white text-[12px] font-semibold text-[var(--color-void)]">
                 <span className="truncate">
-                  {unit === "all" ? "Todas as unidades" : UNIT_LABELS[unit] ?? unit}
+                  {unit === "all"
+                    ? "Todas as unidades"
+                    : UNIT_LABELS[unit] ?? unit}
                 </span>
               </SelectTrigger>
               <SelectContent>
@@ -210,22 +238,20 @@ export function RoomCatalog() {
                     : "border-[var(--color-void)]/15 text-[var(--color-void)]/55 hover:border-[var(--color-void)]/30",
                 )}
               >
-                {t}{" "}
-                <span className="opacity-60">({tagCounts.get(t) ?? 0})</span>
+                {t} <span className="opacity-60">({tagCounts.get(t) ?? 0})</span>
               </button>
             )
           })}
         </div>
 
-        {/* Grid de cards */}
+        {/* Grid de cards — todas as salas, 2 col desde a base */}
         {result.primary.length > 0 ? (
           <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            {result.primary.slice(0, SHOWCASE_LIMIT).map((room) => (
+            {result.primary.map((room) => (
               <RoomCardResponsive key={room.slug} room={room} />
             ))}
           </div>
         ) : result.suggestions.length > 0 ? (
-          // Nunca-zero: mensagem honesta + sugestões de outras unidades
           <div className="mt-10">
             <p className="text-[14px] leading-relaxed text-[var(--color-void)]/70">
               Não temos essa combinação em{" "}
@@ -235,7 +261,7 @@ export function RoomCatalog() {
               . Estas salas te esperam em outras unidades:
             </p>
             <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-              {result.suggestions.slice(0, SHOWCASE_LIMIT).map((room) => (
+              {result.suggestions.map((room) => (
                 <RoomCardResponsive key={room.slug} room={room} highlightUnit />
               ))}
             </div>
@@ -245,17 +271,6 @@ export function RoomCatalog() {
             Ajuste os filtros para ver mais aventuras.
           </p>
         )}
-
-        {/* CTA ver todas */}
-        <div className="mt-10 flex justify-center">
-          <a
-            href="/salas"
-            className="flex h-12 items-center gap-2 rounded-full border-[1.5px] border-[var(--color-void)] px-6 text-[12px] font-bold uppercase tracking-[0.06em] text-[var(--color-void)] transition-colors hover:bg-[var(--color-void)] hover:text-[var(--color-cream)]"
-          >
-            Ver todas as 16 salas
-            <ArrowRight className="size-4" />
-          </a>
-        </div>
       </div>
     </section>
   )

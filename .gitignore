@@ -20,3 +20,9 @@ node_modules
 
 # Gerado pelo Next.js a cada build — não versionar
 next-env.d.ts
+
+# Cache incremental do TypeScript — não versionar
+tsconfig.tsbuildinfo
+
+# Configs locais do Claude Code (skills ficam versionadas; settings local não)
+.claude/settings.local.json

@@ -278,6 +278,17 @@ Baseado em dados do Nielsen Norman Group, Baymard Institute e Forrester 2024–2
 - Sem hover obrigatório
 - Testes: BrowserStack (iOS Safari, Android Chrome, Samsung Internet)
 
+### 4.6 Performance de imagens (regra permanente)
+Toda imagem que entra no site (pôsteres, fotos, recortes, banners) deve ser **a mais leve possível mantendo o máximo de qualidade visual** — nunca subir o arquivo cru/gigante direto na pasta. Vale especialmente porque o `next.config.mjs` está com `images.unoptimized: true`: o Next **não** comprime nada em runtime, o arquivo vai inteiro pro navegador. Logo a otimização é manual e obrigatória antes de commitar.
+
+Convenção adotada (validada em 19/06/2026 na troca dos pôsteres):
+- **Formato:** WebP para arte fotográfica/render (pôsteres, fotos). PNG só quando precisar de transparência real; SVG para ícones/vetores.
+- **Dimensão:** redimensionar pro tamanho de uso + folga de retina. Pôsteres = **máx. 1200px** de largura (cards exibem ~340px; 1200 cobre retina e a futura página da sala). Nunca subir 4000px+ pra exibir em card.
+- **Qualidade:** começar em **q80** e subir só se aparecer artefato visível — o teto é "o máximo de qualidade que não pese". Não usar q100.
+- **Meta de peso:** pôster de card na casa dos **~150–250 KB**. Referência real: a leva de 16 caiu de ~33 MB → ~3 MB (−92%) sem perda perceptível.
+- **Ferramenta no projeto:** `ffmpeg` (libwebp) — `ffmpeg -i in.png -vf "scale='min(1200,iw)':-1" -c:v libwebp -quality 80 out.webp`. (sharp/magick não instalados.)
+- Ao trocar uma arte, **converter + apagar o arquivo antigo + atualizar o caminho** em `data/rooms.ts` (ou onde for referenciada). Sem deixar `.png` órfão.
+
 ---
 
 ## 5. FLUXO DO CLIENTE
