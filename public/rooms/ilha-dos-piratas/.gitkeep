@@ -1,0 +1,9 @@
+# Assets do tema da sala Ilha dos Piratas (/salas/ilha-dos-piratas).
+# Já colocados (otimizados pra .webp a partir dos PNGs do Erickson, regra PRD §4.6):
+#   background.webp       — fundo temático (caverna/mar/navios), opaco
+#   coin.webp             — moedas (1 arquivo, reusado em 3 posições), alpha
+#   straw-hat.webp        — chapéu de palha decorativo, alpha
+#   rope-divider.webp     — corda, divisor do "Ranking do Mês", alpha
+#   golden-particles.webp — brilho/partículas douradas sutis, alpha
+# Referenciados em app/globals.css (.pirate-*). Fallback de gradiente escuro
+# continua ativo se algum arquivo não carregar.

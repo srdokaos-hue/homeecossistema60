@@ -273,6 +273,127 @@
   .fan-in {
     animation: fan-in 0.45s ease-out;
   }
+
+  /* Painel de vidro fosco — páginas de sala temáticas */
+  .glass-panel {
+    background: rgba(12, 14, 18, 0.6);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(245, 215, 123, 0.18);
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.45);
+  }
+  /* variante mais opaca p/ painéis de conteúdo (galeria/história/ranking):
+     mais leitura/separação do cenário, sem virar bloco preto */
+  .glass-strong {
+    background: rgba(10, 12, 16, 0.68);
+  }
+
+  /* Botão dourado — acento de tesouro da sala Ilha dos Piratas */
+  .btn-gold {
+    background: linear-gradient(135deg, #f3d36a 0%, #d8aa35 45%, #9c6f1c 100%);
+    color: #1a1204;
+    border: 1px solid rgba(245, 215, 123, 0.5);
+    box-shadow:
+      0 0 24px rgba(216, 170, 53, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  .btn-gold:hover {
+    box-shadow:
+      0 0 34px rgba(216, 170, 53, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+
+  /* Tema "Ilha dos Piratas" (sala individual). NÃO é sistema global de temas:
+     classes específicas desta sala, gated por slug no componente. */
+  /* base near-black da página: as bordas do cenário desbotam PRA esta cor,
+     então nunca há corte seco entre o background e o preto do site. */
+  .room-page--ilha-dos-piratas {
+    background-color: #050607;
+  }
+  .pirate-room-bg {
+    /* ABSOLUTE (não fixed): cobre toda a área da sala — hero até ranking — e
+       aparece também em screenshot de página inteira. teal escuro de base = o
+       cenário continua abaixo da imagem, nunca vira preto puro. */
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: #081311;
+    background-image:
+      /* luz dourada ambiente (perto do hero e do card) */
+      radial-gradient(circle at 58% 15%, rgba(245, 200, 90, 0.2), transparent 32%),
+      radial-gradient(circle at 85% 28%, rgba(216, 170, 53, 0.15), transparent 24%),
+      /* mar frio nas laterais (vinheta colorida) */
+      radial-gradient(circle at 2% 38%, rgba(12, 37, 40, 0.5), transparent 26%),
+      radial-gradient(circle at 99% 48%, rgba(12, 37, 40, 0.45), transparent 28%),
+      /* a imagem desbota pro teal escuro conforme desce (envolve até o ranking) */
+      linear-gradient(
+        to bottom,
+        rgba(8, 19, 17, 0) 0%,
+        rgba(8, 19, 17, 0) 36%,
+        rgba(8, 19, 17, 0.82) 70%,
+        #081311 100%
+      ),
+      /* leve escurecimento geral pra leitura (controlado) */
+      linear-gradient(rgba(7, 12, 12, 0.22), rgba(7, 12, 12, 0.34)),
+      /* cenário: largura cheia, ancorado no topo */
+      url('/rooms/ilha-dos-piratas/background.webp');
+    background-size:
+      auto, auto, auto, auto, 100% 100%, 100% 100%, 100% auto;
+    background-position:
+      center, center, center, center, center, center, center top;
+    background-repeat: no-repeat;
+    /* MÁSCARA: o cenário deixa de ser um retângulo. As 4 bordas desbotam pra
+       transparente (revelando o #050607 da página) → cantos arredondados
+       suaves, fade forte embaixo. Intersecção das duas linears = vinheta. */
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 5%, #000 70%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 5%, #000 70%, transparent 100%);
+    mask-composite: intersect;
+  }
+  .pirate-decor {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+  }
+  /* camada decorativa que flutua ACIMA dos containers (chapéu, moedas nítidas) */
+  .pirate-decor--front {
+    z-index: 20;
+  }
+  .pirate-coins-dense,
+  .pirate-coins-sparse,
+  .pirate-hat,
+  .pirate-anchor,
+  .pirate-seagull,
+  .pirate-particles {
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+  }
+  .pirate-anchor {
+    background-image: url('/rooms/ilha-dos-piratas/anchor.webp');
+  }
+  /* gaivota: cada instância define seu PNG recortado via style inline (são
+     pássaros diferentes), esta classe só carrega posição/tamanho/contain. */
+  .pirate-coins-dense {
+    background-image: url('/rooms/ilha-dos-piratas/coins-dense.webp');
+  }
+  .pirate-coins-sparse {
+    background-image: url('/rooms/ilha-dos-piratas/coins-sparse.webp');
+  }
+  .pirate-hat {
+    background-image: url('/rooms/ilha-dos-piratas/straw-hat.webp');
+  }
+  .pirate-particles {
+    background-image: url('/rooms/ilha-dos-piratas/golden-particles.webp');
+  }
 }
 
 @keyframes cryptex-shake {
