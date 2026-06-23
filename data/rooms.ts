@@ -15,6 +15,12 @@ export interface Room {
   priceFrom: number
   /** imagem do pôster */
   poster: string
+  /** imagem LIMPA (cena sem título embutido) p/ o hero no mobile — evita
+   *  duplicar o título do cartaz com o título HTML. Convenção dos assets:
+   *  background-clean / [slug]-bg-clean / hero-clean. Fallback: `poster`. */
+  heroClean?: string
+  /** pôster LIMPO (sem título) p/ os cards quando existir. Fallback: `poster`. */
+  posterClean?: string
   /** object-position customizado do pôster no card (padrão: "top") */
   posterPosition?: string
   /** dificuldade 1–5 (cadeados) */
@@ -69,6 +75,7 @@ export const rooms: Room[] = [
     units: ["ParkShopping", "Santa Úrsula"],
     priceFrom: 84.9,
     poster: "/posters/ilha-dos-piratas.webp",
+    heroClean: "/rooms/ilha-dos-piratas/background.webp",
     difficulty: 3,
     family: true,
     scares: false,
@@ -290,6 +297,7 @@ export const rooms: Room[] = [
     units: ["ParkShopping"],
     priceFrom: 84.9,
     poster: "/posters/matadouro.webp",
+    heroClean: "/rooms/matadouro/matadouro-background-clean.webp",
     difficulty: 5,
     family: false,
     scares: true,
@@ -353,4 +361,36 @@ export function roomHasTag(room: Room, tag: RoomTag): boolean {
     case "12+":
       return room.age === "12 anos"
   }
+}
+
+/** afinidade temática entre gêneros (pra recomendação da página da sala) */
+const GENRE_AFFINITY: Record<RoomGenre, RoomGenre[]> = {
+  Aventura: ["Aventura", "Investigação"],
+  Investigação: ["Investigação", "Aventura", "Suspense"],
+  Suspense: ["Suspense", "Investigação"],
+}
+
+/**
+ * Salas recomendadas pra "Você Também Pode Curtir", por relevância:
+ *   1º tema/categoria (mesmo gênero > gênero afim)
+ *   2º mesma unidade
+ *   3º populares (desempate/preenchimento)
+ * Nunca inclui a própria sala. Ordena por pontuação e completa com as demais.
+ */
+export function recommendRooms(current: Room, limit = 8): Room[] {
+  const affine = new Set(GENRE_AFFINITY[current.genre] ?? [current.genre])
+  return rooms
+    .filter((r) => r.slug !== current.slug)
+    .map((r) => {
+      let score = 0
+      if (r.genre === current.genre) score += 5
+      else if (affine.has(r.genre)) score += 3
+      if (r.units.some((u) => current.units.includes(u))) score += 2
+      if (r.popular) score += 1
+      if (r.featured) score += 0.5
+      return { r, score }
+    })
+    .sort((a, b) => b.score - a.score)
+    .map((s) => s.r)
+    .slice(0, Math.max(limit, 0))
 }

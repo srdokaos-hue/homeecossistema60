@@ -21,8 +21,21 @@ export function RoomReserveCard({ room }: { room: Room }) {
   // Preço único: o modelo de dados atual não tem preço por unidade.
   // Quando entrar, trocar por preço da `unit` selecionada (ver room-page-decisoes-v1).
   const price = room.priceFrom
-  // acento por sala: Ilha dos Piratas usa botão dourado de tesouro
+  // acento por sala: Ilha = botão dourado de tesouro; Matadouro = vermelho queimado
   const isPirate = room.slug === "ilha-dos-piratas"
+  const isMatadouro = room.slug === "matadouro"
+  // glow discreto atrás do CTA (dourado na Ilha, vermelho no Matadouro)
+  const ctaGlow = isPirate
+    ? "rgba(216,170,53,0.3)"
+    : isMatadouro
+      ? "rgba(193,43,43,0.3)"
+      : null
+  // classe do botão por tema
+  const ctaClass = isPirate
+    ? "btn-gold"
+    : isMatadouro
+      ? "btn-blood-burnt"
+      : "bg-[var(--color-blood)] text-white transition-colors hover:bg-[var(--color-blood-dark)]"
 
   return (
     <>
@@ -89,20 +102,18 @@ export function RoomReserveCard({ room }: { room: Room }) {
 
         {/* CTA de reserva (fluxo real do site, ainda não implementado) */}
         <div className="relative mt-5">
-          {isPirate && (
+          {ctaGlow && (
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-x-3 inset-y-0 rounded-full blur-xl"
-              style={{ background: "rgba(216,170,53,0.3)" }}
+              style={{ background: ctaGlow }}
             />
           )}
           <button
             type="button"
             className={cn(
               "relative flex h-12 w-full items-center justify-center gap-2 rounded-full text-[13px] font-bold uppercase tracking-[0.06em] transition-shadow",
-              isPirate
-                ? "btn-gold"
-                : "bg-[var(--color-blood)] text-white transition-colors hover:bg-[var(--color-blood-dark)]",
+              ctaClass,
             )}
           >
             Reservar Agora →
@@ -115,8 +126,10 @@ export function RoomReserveCard({ room }: { room: Room }) {
         </p>
       </div>
 
-      {/* Barra fixa no rodapé (mobile/tablet) — padrão Airbnb/OpenTable */}
-      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t border-[rgba(255,215,120,0.15)] bg-[rgba(12,12,14,0.92)] px-4 py-3 backdrop-blur-md lg:hidden">
+      {/* Barra fixa no rodapé (mobile/tablet) — padrão Airbnb/OpenTable.
+          A classe `room-reserve-bar` é usada pelo CSS p/ levantar o WhatsApp
+          acima dela no mobile. pb com safe-area (notch do iPhone). */}
+      <div className="room-reserve-bar fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t border-white/10 bg-[rgba(12,12,14,0.94)] px-4 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
         <div>
           <div className="font-display text-[22px] leading-none text-white">
             R$ {brl(price)}
@@ -129,7 +142,7 @@ export function RoomReserveCard({ room }: { room: Room }) {
           type="button"
           className={cn(
             "flex h-11 max-w-[58%] flex-1 items-center justify-center rounded-full text-[12px] font-bold uppercase tracking-[0.06em]",
-            isPirate ? "btn-gold" : "bg-[var(--color-blood)] text-white",
+            ctaClass,
           )}
         >
           Reservar Agora

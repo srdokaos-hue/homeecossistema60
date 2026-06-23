@@ -45,7 +45,7 @@ export function WhatsappButton() {
       aria-label="Fala com a gente no WhatsApp"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="fixed bottom-5 right-5 z-[60] flex items-center rounded-full bg-[#25D366] py-2 pl-2 pr-2 text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-300 hover:brightness-105 md:bottom-6 md:right-6"
+      className="whatsapp-fab fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] right-4 z-[60] flex items-center rounded-full bg-[#25D366] py-2 pl-2 pr-2 text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-300 hover:brightness-105 md:bottom-6 md:right-6"
     >
       <span
         className={`overflow-hidden whitespace-nowrap text-[14px] font-bold transition-all duration-300 ${
@@ -54,7 +54,7 @@ export function WhatsappButton() {
       >
         Fala com a gente
       </span>
-      <span className="flex aspect-square size-12 shrink-0 items-center justify-center">
+      <span className="flex aspect-square size-11 shrink-0 items-center justify-center md:size-12">
         <svg
           viewBox="0 0 24 24"
           className="block size-7 shrink-0"

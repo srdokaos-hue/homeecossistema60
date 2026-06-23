@@ -7,15 +7,17 @@ import { RoomDetail } from "@/components/room-detail"
 import { rooms } from "@/data/rooms"
 
 /**
- * Rota dinâmica /salas/[sala] (SEO híbrido, CLAUDE.md). Por ora só a Ilha dos
- * Piratas tem página — adicionar o slug de cada sala aqui conforme ela ganhar
- * a sua. `dynamicParams = false` faz os demais slugs caírem em 404 (status quo).
+ * Rota dinâmica /salas/[sala] (SEO híbrido, CLAUDE.md). Ilha e Matadouro têm
+ * tema próprio e são pré-renderizadas; as demais salas usam o mesmo template
+ * (fundo escuro padrão + placeholders) sob demanda, pra que a vitrine
+ * "Você Também Pode Curtir" / "Ver sala" leve a uma página real. Slug inválido
+ * cai em 404 via notFound() abaixo.
  */
 export function generateStaticParams() {
-  return [{ sala: "ilha-dos-piratas" }]
+  return [{ sala: "ilha-dos-piratas" }, { sala: "matadouro" }]
 }
 
-export const dynamicParams = false
+export const dynamicParams = true
 
 function getRoom(sala: string) {
   return rooms.find((r) => r.slug === sala)

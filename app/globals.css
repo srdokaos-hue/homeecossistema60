@@ -303,6 +303,21 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.45);
   }
 
+  /* Botão vermelho queimado/cinematográfico — acento da sala Matadouro */
+  .btn-blood-burnt {
+    background: linear-gradient(135deg, #b82424 0%, #8f1f1f 55%, #4a1010 100%);
+    color: #fff;
+    border: 1px solid rgba(193, 43, 43, 0.45);
+    box-shadow:
+      0 0 24px rgba(193, 43, 43, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+  .btn-blood-burnt:hover {
+    box-shadow:
+      0 0 34px rgba(193, 43, 43, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.26);
+  }
+
   /* Tema "Ilha dos Piratas" (sala individual). NÃO é sistema global de temas:
      classes específicas desta sala, gated por slug no componente. */
   /* base near-black da página: as bordas do cenário desbotam PRA esta cor,
@@ -355,6 +370,27 @@
       linear-gradient(to bottom, transparent 0%, #000 5%, #000 70%, transparent 100%);
     mask-composite: intersect;
   }
+  /* Suaviza o CORTE SECO na base da imagem: este box tem a MESMA proporção do
+     cenário (1920x1072) ancorado no topo, então sua borda inferior coincide
+     exatamente com o fim da imagem (independente da largura/altura da página).
+     O degradê fecha no teal-base bem na emenda → a imagem se dissolve no fundo,
+     sem linha reta. Não altera nenhuma outra camada já aprovada. */
+  .pirate-room-bg::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    aspect-ratio: 1920 / 1072;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 85%,
+      rgba(8, 19, 17, 0.85) 96%,
+      #081311 100%
+    );
+  }
   .pirate-decor {
     pointer-events: none;
     position: absolute;
@@ -393,6 +429,139 @@
   }
   .pirate-particles {
     background-image: url('/rooms/ilha-dos-piratas/golden-particles.webp');
+  }
+
+  /* ===== Tema "Matadouro" (sala individual) =====================================
+     Mesmo padrão técnico da Ilha: classes gated por slug, bg com máscara/fade,
+     decoração em camadas. Paleta fria/industrial — SEM dourado. O acento da sala
+     (--color-gold remapeado p/ vermelho-alerta) recolore título de seção,
+     gênero, dificuldade, ranking e divisor de uma vez, sem mexer no template. */
+  .room-page--matadouro {
+    background-color: #050607;
+    --color-gold: #c12b2b; /* acento da sala: vermelho-alerta no lugar do dourado */
+    --color-gold-ink: #ffffff;
+  }
+  /* containers translúcidos: mesma forma, variação de cor (borda vermelho queimado) */
+  .room-page--matadouro .glass-panel {
+    background: rgba(10, 12, 15, 0.66);
+    border-color: rgba(193, 43, 43, 0.16);
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.48);
+  }
+  .room-page--matadouro .glass-strong {
+    background: rgba(8, 10, 13, 0.72);
+  }
+
+  .matadouro-room-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: #0a0c0f;
+    background-image:
+      /* luz vermelha discreta ao fundo (centro-direita, como no cenário) */
+      radial-gradient(circle at 62% 30%, rgba(143, 31, 31, 0.16), transparent 30%),
+      /* frio petróleo nas laterais */
+      radial-gradient(circle at 1% 40%, rgba(11, 42, 45, 0.5), transparent 26%),
+      radial-gradient(circle at 99% 46%, rgba(11, 42, 45, 0.42), transparent 28%),
+      /* o cenário desbota pro #0a0c0f conforme desce (envolve até o ranking) */
+      linear-gradient(
+        to bottom,
+        rgba(10, 12, 15, 0) 0%,
+        rgba(10, 12, 15, 0) 34%,
+        rgba(10, 12, 15, 0.84) 70%,
+        #0a0c0f 100%
+      ),
+      /* escurecimento geral pra leitura */
+      linear-gradient(rgba(5, 6, 7, 0.3), rgba(5, 6, 7, 0.42)),
+      /* cenário industrial */
+      url('/rooms/matadouro/matadouro-background-clean.webp');
+    background-size:
+      auto, auto, auto, 100% 100%, 100% 100%, 100% auto;
+    background-position:
+      center, center, center, center, center, center top;
+    background-repeat: no-repeat;
+    /* MÁSCARA (igual Ilha): 4 bordas desbotam pro #050607, fade forte embaixo */
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 5%, #000 70%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 5%, #000 70%, transparent 100%);
+    mask-composite: intersect;
+  }
+  /* mesma correção de corte seco da Ilha: box na proporção do cenário
+     (2048x1143) ancorado no topo, degradê fechando no #0a0c0f na emenda */
+  .matadouro-room-bg::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    aspect-ratio: 2048 / 1143;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 85%,
+      rgba(10, 12, 15, 0.85) 96%,
+      #0a0c0f 100%
+    );
+  }
+  .matadouro-decor {
+    pointer-events: none;
+    user-select: none;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .matadouro-decor--front {
+    z-index: 20;
+  }
+  .matadouro-chain,
+  .matadouro-newspaper,
+  .matadouro-fog,
+  .matadouro-red-light {
+    position: absolute;
+    background-repeat: no-repeat;
+    background-position: center;
+    user-select: none;
+  }
+  /* correntes/jornais: PNG recortado individual via style inline → contain */
+  .matadouro-chain,
+  .matadouro-newspaper {
+    background-size: contain;
+  }
+  /* atmosfera: overlays de cobertura (névoa/luz) → cover */
+  .matadouro-fog,
+  .matadouro-red-light {
+    background-size: cover;
+  }
+}
+
+/* ===== MOBILE/TABLET (< lg): imersão temática ================================
+   Regras sem @layer → vencem as utilities acima. NÃO afetam o desktop (lg+).
+   No mobile o cenário vira fundo FIXO cobrindo a viewport (cover): a cena
+   acompanha o scroll atrás dos painéis translúcidos = sensação envolvente,
+   em vez de uma faixa fina no topo. A vinheta/máscara já existente continua. */
+@media (max-width: 1023px) {
+  .pirate-room-bg,
+  .matadouro-room-bg {
+    position: fixed;
+    background-size: cover;
+    background-position: center top;
+  }
+  /* o ::after corrige o corte seco do caso desktop (imagem 100% auto); no
+     mobile o cover preenche a tela, então ele não é necessário. */
+  .pirate-room-bg::after,
+  .matadouro-room-bg::after {
+    display: none;
+  }
+  /* WhatsApp sobe acima da barra fixa de reserva quando ela existe na página
+     (usa :has, decoupla os dois componentes) — não cobre o botão "Reservar". */
+  body:has(.room-reserve-bar) .whatsapp-fab {
+    bottom: calc(5.25rem + env(safe-area-inset-bottom));
   }
 }
 

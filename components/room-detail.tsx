@@ -1,11 +1,13 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Play } from "lucide-react"
-import { type Room } from "@/data/rooms"
+import { ArrowLeft, Play, Star } from "lucide-react"
+import { recommendRooms, type Room } from "@/data/rooms"
 import { DifficultyMeter } from "@/components/difficulty-meter"
 import { DualGameBadge, TopPlayedBadge } from "@/components/room-badges"
 import { RoomReserveCard } from "@/components/room-reserve-card"
+import { RelatedRoomsCarousel } from "@/components/related-rooms-carousel"
 import { RoomDecorPirate } from "@/components/room-decor-pirate"
+import { RoomDecorMatadouro } from "@/components/room-decor-matadouro"
 import { cn } from "@/lib/utils"
 
 /** Pílula clara translúcida das tags do hero */
@@ -33,6 +35,13 @@ function StatCard({ children }: { children: React.ReactNode }) {
  */
 export function RoomDetail({ room }: { room: Room }) {
   const isPirate = room.slug === "ilha-dos-piratas"
+  const isMatadouro = room.slug === "matadouro"
+
+  // recomendações por relevância (tema → unidade → populares), nunca a própria sala
+  const relatedRooms = recommendRooms(room, 8)
+
+  // hero no mobile usa a cena limpa (sem título embutido) quando existir
+  const heroMobileSrc = room.heroClean ?? room.poster
 
   const heroTags = [
     room.family ? "Pra família" : null,
@@ -43,15 +52,25 @@ export function RoomDetail({ room }: { room: Room }) {
   return (
     <main
       className={cn(
-        "relative min-h-screen pb-24 lg:pb-0",
-        isPirate ? "room-page--ilha-dos-piratas" : "bg-[var(--color-void)]",
+        // padding-bottom no mobile = altura da barra fixa de reserva + safe-area
+        // (iPhone), pra nenhuma seção ficar escondida atrás dela. Zerado no desktop.
+        "relative min-h-screen pb-[calc(7rem+env(safe-area-inset-bottom))] lg:pb-0",
+        isPirate && "room-page--ilha-dos-piratas",
+        isMatadouro && "room-page--matadouro",
+        !isPirate && !isMatadouro && "bg-[var(--color-void)]",
       )}
     >
-      {/* Fundo temático fixo (só Ilha) + camada decorativa */}
+      {/* Fundo temático + camada decorativa (gating por slug, não tema global) */}
       {isPirate && (
         <>
           <div className="pirate-room-bg" aria-hidden="true" />
           <RoomDecorPirate />
+        </>
+      )}
+      {isMatadouro && (
+        <>
+          <div className="matadouro-room-bg" aria-hidden="true" />
+          <RoomDecorMatadouro />
         </>
       )}
 
@@ -68,23 +87,39 @@ export function RoomDetail({ room }: { room: Room }) {
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_minmax(350px,390px)] lg:gap-10">
           {/* COLUNA PRINCIPAL */}
           <div className="flex flex-col gap-7">
-            {/* HERO */}
-            <section className="relative h-[340px] overflow-hidden rounded-2xl border border-[rgba(255,215,120,0.2)] shadow-[0_28px_80px_rgba(0,0,0,0.55),0_0_40px_rgba(216,170,53,0.08)] md:h-[460px]">
+            {/* HERO — mobile: proporção confortável (4/3); desktop (lg+): inalterado */}
+            <section className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-[rgba(255,215,120,0.2)] shadow-[0_28px_80px_rgba(0,0,0,0.55),0_0_40px_rgba(216,170,53,0.08)] lg:aspect-auto lg:h-[460px]">
+              {/* MOBILE/tablet (<lg): imagem LIMPA (cena sem título embutido) pra não
+                  duplicar/cortar o título do cartaz. Fallback = pôster. */}
+              <Image
+                src={heroMobileSrc}
+                alt={`Cena da sala ${room.name}`}
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover object-center lg:hidden"
+              />
+              {/* DESKTOP (lg+): pôster aprovado, exatamente como antes */}
               <Image
                 src={room.poster || "/placeholder.svg"}
                 alt={`Pôster da sala ${room.name}`}
                 fill
                 priority
-                sizes="(max-width: 1024px) 100vw, 70vw"
+                sizes="70vw"
                 style={{ objectPosition: room.posterPosition ?? "center" }}
-                className="object-cover"
+                className="hidden object-cover lg:block"
               />
               {/* degradê escuro cinematográfico na base pra leitura do título */}
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-void)] via-[rgba(8,8,10,0.55)] to-transparent" />
-              {/* glow dourado discreto no topo/centro */}
+              {/* glow discreto no topo/centro (acento da sala: dourado na Ilha,
+                  vermelho frio no Matadouro) */}
               <div
                 className="pointer-events-none absolute inset-0"
-                style={{ background: "radial-gradient(62% 52% at 55% 12%, rgba(245,200,90,0.12), transparent 60%)" }}
+                style={{
+                  background: isMatadouro
+                    ? "radial-gradient(62% 52% at 58% 14%, rgba(193,43,43,0.12), transparent 60%)"
+                    : "radial-gradient(62% 52% at 55% 12%, rgba(245,200,90,0.12), transparent 60%)",
+                }}
                 aria-hidden="true"
               />
 
@@ -232,6 +267,35 @@ export function RoomDetail({ room }: { room: Room }) {
                 </tbody>
               </table>
             </section>
+
+            {/* AVALIAÇÕES (placeholder até termos dados reais) */}
+            <section className="glass-panel glass-strong rounded-2xl p-5">
+              <div className="flex items-end justify-between gap-3">
+                <h2 className="font-display text-[22px] text-white">Avaliações</h2>
+                <span className="text-[12px] text-[var(--color-ash)]">— avaliações</span>
+              </div>
+              <p className="mt-1 inline-block rounded border border-dashed border-[var(--color-blood)]/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--color-blood)]">
+                Aguardando avaliações reais
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {[1, 2, 3].map((n) => (
+                  <div
+                    key={n}
+                    className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4"
+                  >
+                    <div className="flex gap-0.5 text-[var(--color-gold)]" aria-hidden="true">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className="size-3 fill-current" />
+                      ))}
+                    </div>
+                    <p className="mt-2 text-[12px] leading-relaxed text-[var(--color-ash)]/80">
+                      [Avaliação real {n}]
+                    </p>
+                    <p className="mt-2 text-[11px] text-[var(--color-ash)]/55">— Cliente</p>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
 
           {/* SIDEBAR DE RESERVA */}
@@ -239,6 +303,27 @@ export function RoomDetail({ room }: { room: Room }) {
             <RoomReserveCard room={room} />
           </aside>
         </div>
+
+        {/* VOCÊ TAMBÉM PODE CURTIR — largura cheia, salas recomendadas (reusa o
+            card padrão do catálogo; acento herda o tema da página) */}
+        {relatedRooms.length > 0 && (
+          <section className="mt-10">
+            {/* header: empilha no mobile (link abaixo) pra o título não cortar;
+                vira linha no sm+ (desktop aprovado inalterado) */}
+            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
+              <h2 className="font-display text-[20px] leading-tight text-white sm:text-[24px]">
+                Você Também Pode <span className="text-[var(--color-gold)]">Curtir</span>
+              </h2>
+              <Link
+                href="/salas"
+                className="shrink-0 text-[12px] font-bold uppercase tracking-[0.06em] text-[var(--color-ash)] transition-colors hover:text-[var(--color-gold)]"
+              >
+                Ver todas as salas →
+              </Link>
+            </div>
+            <RelatedRoomsCarousel rooms={relatedRooms} />
+          </section>
+        )}
       </div>
     </main>
   )

@@ -1,8 +1,10 @@
 import Image from "next/image"
+import Link from "next/link"
 import { MapPin } from "lucide-react"
 import { roomHasTag, UNIT_LABELS, type Room, type RoomTag } from "@/data/rooms"
 import { DifficultyMeter } from "@/components/difficulty-meter"
 import { AgeBadge, DualGameBadge, TopPlayedBadge } from "@/components/room-badges"
+import { cn } from "@/lib/utils"
 
 /** até 2 tags-atalho pequenas exibidas no card */
 const DISPLAY_TAGS: RoomTag[] = ["Pra família", "Não assusta"]
@@ -18,19 +20,39 @@ function CardTag({ label }: { label: string }) {
 export function RoomCard({
   room,
   highlightUnit,
+  ctaLabel = "Reservar",
+  ctaHref,
+  compact = false,
 }: {
   room: Room
   /** quando vem de sugestão "nunca-zero", destaca a unidade onde a sala existe */
   highlightUnit?: boolean
+  /** texto do botão (ex.: "Ver sala" na vitrine de recomendações) */
+  ctaLabel?: string
+  /** se informado, o botão vira link p/ esta rota (ex.: página da sala) */
+  ctaHref?: string
+  /** versão enxuta (vitrine de recomendações no mobile): esconde tagline,
+   *  tags e preço pra encurtar o card */
+  compact?: boolean
 }) {
   const tags = DISPLAY_TAGS.filter((t) => roomHasTag(room, t)).slice(0, 2)
+  // pôster limpo (sem título) quando existir; senão o pôster atual
+  const cardImage = room.posterClean || room.poster || "/placeholder.svg"
+  const ctaClass =
+    "mt-auto flex h-11 w-full items-center justify-center rounded-full bg-[var(--color-blood)] text-[12px] font-bold uppercase tracking-[0.06em] text-white transition-colors hover:bg-[var(--color-blood-dark)]"
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[14px] bg-[var(--color-carbon)] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55)]">
-      {/* Imagem do pôster — protagonista (70% da altura) */}
-      <div className="relative aspect-[4/5] overflow-hidden">
+      {/* Imagem do pôster — protagonista. Na vitrine compacta (mobile) fica mais
+          baixa pra encurtar o card; no desktop volta ao 4/5 aprovado. */}
+      <div
+        className={cn(
+          "relative overflow-hidden",
+          compact ? "aspect-[16/11] sm:aspect-[4/5]" : "aspect-[4/5]",
+        )}
+      >
         <Image
-          src={room.poster || "/placeholder.svg"}
+          src={cardImage}
           alt={`Pôster da sala ${room.name}`}
           fill
           sizes="(max-width: 640px) 80vw, (max-width: 1024px) 45vw, 22vw"
@@ -56,7 +78,14 @@ export function RoomCard({
           <DifficultyMeter level={room.difficulty} className="mt-0.5 shrink-0" />
         </div>
 
-        <p className="text-[11px] italic leading-snug text-[var(--color-ash)]">
+        {/* compact (vitrine mobile): tagline/tags/preço somem só no mobile (<sm),
+            no desktop o card segue completo e inalterado */}
+        <p
+          className={cn(
+            "text-[11px] italic leading-snug text-[var(--color-ash)]",
+            compact && "hidden sm:block",
+          )}
+        >
           {room.tagline}
           {room.dualGame && (
             <span className="mt-1 block text-[9px] not-italic">
@@ -66,7 +95,7 @@ export function RoomCard({
         </p>
 
         {tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
+          <div className={cn("flex flex-wrap gap-1", compact && "hidden sm:flex")}>
             {tags.map((t) => (
               <CardTag key={t} label={t} />
             ))}
@@ -94,7 +123,12 @@ export function RoomCard({
           <span>{room.units.map((u) => UNIT_LABELS[u] ?? u).join(" · ")}</span>
         </div>
 
-        <p className="text-[10px] text-[var(--color-ash)]">
+        <p
+          className={cn(
+            "text-[10px] text-[var(--color-ash)]",
+            compact && "hidden sm:block",
+          )}
+        >
           a partir de{" "}
           <span className="font-semibold text-white">
             R$ {room.priceFrom.toFixed(2).replace(".", ",")}
@@ -102,12 +136,15 @@ export function RoomCard({
           por pessoa
         </p>
 
-        <button
-          type="button"
-          className="mt-auto flex h-11 w-full items-center justify-center rounded-full bg-[var(--color-blood)] text-[12px] font-bold uppercase tracking-[0.06em] text-white transition-colors hover:bg-[var(--color-blood-dark)]"
-        >
-          Reservar
-        </button>
+        {ctaHref ? (
+          <Link href={ctaHref} className={ctaClass}>
+            {ctaLabel}
+          </Link>
+        ) : (
+          <button type="button" className={ctaClass}>
+            {ctaLabel}
+          </button>
+        )}
       </div>
     </article>
   )
