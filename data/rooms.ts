@@ -15,10 +15,6 @@ export interface Room {
   priceFrom: number
   /** imagem do pôster */
   poster: string
-  /** imagem LIMPA (cena sem título embutido) p/ o hero no mobile — evita
-   *  duplicar o título do cartaz com o título HTML. Convenção dos assets:
-   *  background-clean / [slug]-bg-clean / hero-clean. Fallback: `poster`. */
-  heroClean?: string
   /** pôster LIMPO (sem título) p/ os cards quando existir. Fallback: `poster`. */
   posterClean?: string
   /** object-position customizado do pôster no card (padrão: "top") */
@@ -75,7 +71,6 @@ export const rooms: Room[] = [
     units: ["ParkShopping", "Santa Úrsula"],
     priceFrom: 84.9,
     poster: "/posters/ilha-dos-piratas.webp",
-    heroClean: "/rooms/ilha-dos-piratas/background.webp",
     difficulty: 3,
     family: true,
     scares: false,
@@ -297,7 +292,6 @@ export const rooms: Room[] = [
     units: ["ParkShopping"],
     priceFrom: 84.9,
     poster: "/posters/matadouro.webp",
-    heroClean: "/rooms/matadouro/matadouro-background-clean.webp",
     difficulty: 5,
     family: false,
     scares: true,
@@ -361,6 +355,34 @@ export function roomHasTag(room: Room, tag: RoomTag): boolean {
     case "12+":
       return room.age === "12 anos"
   }
+}
+
+/** salas com cartaz LIMPO (sem título/slogan) em /posters/clean/[slug].webp */
+const CLEAN_POSTER_SLUGS = new Set<string>([
+  "ilha-dos-piratas",
+  "profecia-orbe-magico",
+  "busca-santo-graal",
+  "anel-do-poder",
+  "projeto-chronnos",
+  "operacao-hora-zero",
+  "pandemia-k13",
+  "museu-dos-misterios",
+  "casa-do-will",
+  "devorador-de-mentes",
+  "cativeiro",
+  "fnaf",
+  "ameaca-zumbi",
+])
+
+/**
+ * Imagem do hero da sala no mobile: usa o cartaz LIMPO (sem título embutido)
+ * quando existir, pra não duplicar/cortar o título com o título HTML. NÃO é o
+ * background temático da página. Fallback: o pôster normal.
+ */
+export function heroCleanImage(room: Room): string {
+  return CLEAN_POSTER_SLUGS.has(room.slug)
+    ? `/posters/clean/${room.slug}.webp`
+    : room.poster
 }
 
 /** afinidade temática entre gêneros (pra recomendação da página da sala) */

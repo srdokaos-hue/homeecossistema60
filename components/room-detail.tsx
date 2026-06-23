@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowLeft, Play, Star } from "lucide-react"
-import { recommendRooms, type Room } from "@/data/rooms"
+import { heroCleanImage, recommendRooms, type Room } from "@/data/rooms"
 import { DifficultyMeter } from "@/components/difficulty-meter"
 import { DualGameBadge, TopPlayedBadge } from "@/components/room-badges"
 import { RoomReserveCard } from "@/components/room-reserve-card"
@@ -40,8 +40,8 @@ export function RoomDetail({ room }: { room: Room }) {
   // recomendações por relevância (tema → unidade → populares), nunca a própria sala
   const relatedRooms = recommendRooms(room, 8)
 
-  // hero no mobile usa a cena limpa (sem título embutido) quando existir
-  const heroMobileSrc = room.heroClean ?? room.poster
+  // hero no mobile usa o CARTAZ LIMPO da sala (sem título), nunca o bg da página
+  const heroMobileSrc = heroCleanImage(room)
 
   const heroTags = [
     room.family ? "Pra família" : null,
@@ -87,16 +87,16 @@ export function RoomDetail({ room }: { room: Room }) {
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_minmax(350px,390px)] lg:gap-10">
           {/* COLUNA PRINCIPAL */}
           <div className="flex flex-col gap-7">
-            {/* HERO — mobile: proporção confortável (4/3); desktop (lg+): inalterado */}
-            <section className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-[rgba(255,215,120,0.2)] shadow-[0_28px_80px_rgba(0,0,0,0.55),0_0_40px_rgba(216,170,53,0.08)] lg:aspect-auto lg:h-[460px]">
-              {/* MOBILE/tablet (<lg): imagem LIMPA (cena sem título embutido) pra não
-                  duplicar/cortar o título do cartaz. Fallback = pôster. */}
+            {/* HERO — mobile: cartaz retrato (4/5); desktop (lg+): inalterado */}
+            <section className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-[rgba(255,215,120,0.2)] shadow-[0_28px_80px_rgba(0,0,0,0.55),0_0_40px_rgba(216,170,53,0.08)] sm:aspect-[3/4] lg:aspect-auto lg:h-[460px]">
+              {/* MOBILE/tablet (<lg): CARTAZ LIMPO da sala (sem título embutido),
+                  NÃO o background da página. Fallback = pôster. */}
               <Image
                 src={heroMobileSrc}
-                alt={`Cena da sala ${room.name}`}
+                alt={`Cartaz da sala ${room.name}`}
                 fill
                 priority
-                sizes="100vw"
+                sizes="(max-width: 1024px) 100vw, 70vw"
                 className="object-cover object-center lg:hidden"
               />
               {/* DESKTOP (lg+): pôster aprovado, exatamente como antes */}

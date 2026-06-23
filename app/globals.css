@@ -540,23 +540,32 @@
   }
 }
 
-/* ===== MOBILE/TABLET (< lg): imersão temática ================================
+/* ===== MOBILE/TABLET (< lg) ===================================================
    Regras sem @layer → vencem as utilities acima. NÃO afetam o desktop (lg+).
-   No mobile o cenário vira fundo FIXO cobrindo a viewport (cover): a cena
-   acompanha o scroll atrás dos painéis translúcidos = sensação envolvente,
-   em vez de uma faixa fina no topo. A vinheta/máscara já existente continua. */
+   IMPORTANTE: o fundo temático fica `absolute` (preso ao <main>), NUNCA `fixed`
+   — fixed vazava por trás do footer (área clara cobrindo o rodapé). Assim a
+   cena cobre só a área da sala e desbota pro #050607 antes do footer (máscara
+   inferior já existente). Reforço de escurecimento p/ leitura no mobile. */
 @media (max-width: 1023px) {
   .pirate-room-bg,
   .matadouro-room-bg {
-    position: fixed;
-    background-size: cover;
-    background-position: center top;
+    /* trava qualquer override antigo: contido no main */
+    position: absolute;
   }
-  /* o ::after corrige o corte seco do caso desktop (imagem 100% auto); no
-     mobile o cover preenche a tela, então ele não é necessário. */
-  .pirate-room-bg::after,
-  .matadouro-room-bg::after {
-    display: none;
+  /* camada escura extra só no mobile, pra leitura e pra domar a área clara
+     (céu/névoa) do cenário sem apagá-lo. */
+  .pirate-room-bg::before,
+  .matadouro-room-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(5, 6, 7, 0.28) 0%,
+      rgba(5, 6, 7, 0.5) 55%,
+      #050607 100%
+    );
+    pointer-events: none;
   }
   /* WhatsApp sobe acima da barra fixa de reserva quando ela existe na página
      (usa :has, decoupla os dois componentes) — não cobre o botão "Reservar". */
