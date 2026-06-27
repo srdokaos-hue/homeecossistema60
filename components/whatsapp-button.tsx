@@ -1,10 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-
-// Placeholder — substituir pelo número real (formato internacional, só dígitos)
-const PHONE = "5500000000000"
-const MESSAGE = "Olá! Quero saber mais sobre as salas do 60 Minutos."
+import { WHATSAPP_MESSAGE as MESSAGE, whatsappHref } from "@/lib/whatsapp"
 
 export function WhatsappButton() {
   const [expanded, setExpanded] = useState(false)
@@ -34,7 +31,7 @@ export function WhatsappButton() {
     }
   }, [])
 
-  const href = `https://wa.me/${PHONE}?text=${encodeURIComponent(MESSAGE)}`
+  const href = whatsappHref(MESSAGE)
   const showPill = expanded || hovered
 
   return (

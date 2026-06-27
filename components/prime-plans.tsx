@@ -56,6 +56,8 @@ function brl(value: number) {
 export function PrimePlans() {
   return (
     <section id="prime" className="relative overflow-hidden bg-[#0d0d0f] py-16 md:py-24">
+      {/* âncora de navegação (bottom sheet mobile "Escape Prime") */}
+      <span id="escape-prime" aria-hidden="true" className="block scroll-mt-24" />
       {/* pattern de símbolos a 4% */}
       <div
         className="absolute inset-0 opacity-[0.04]"

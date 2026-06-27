@@ -6,6 +6,8 @@ export function PartyBusiness() {
     <>
       {/* ESCAPE PARTY — seção hero própria, com força */}
       <section id="festas" className="bg-[var(--color-void)] pt-16 md:pt-24">
+        {/* âncora de navegação (bottom nav mobile "Festas") */}
+        <span id="escape-party" aria-hidden="true" className="block scroll-mt-24" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="relative flex min-h-[440px] flex-col justify-end overflow-hidden rounded-[22px] border border-[rgba(212,175,55,0.16)] p-8 md:p-12">
             <Image
@@ -41,6 +43,8 @@ export function PartyBusiness() {
 
       {/* ESCAPE ANALYSIS — mesma estrutura full-bleed do Escape Party */}
       <section id="empresas" className="bg-[var(--color-void)] py-16 md:py-24">
+        {/* âncora de navegação (bottom sheet mobile "Empresas") */}
+        <span id="escape-analysis" aria-hidden="true" className="block scroll-mt-24" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="relative flex min-h-[440px] flex-col justify-end overflow-hidden rounded-[22px] border border-[rgba(212,175,55,0.16)] p-8 md:p-12">
             <Image

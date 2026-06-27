@@ -18,9 +18,8 @@ function brl(v: number) {
 export function RoomReserveCard({ room }: { room: Room }) {
   const [unit, setUnit] = useState(room.units[0])
   const multiUnit = room.units.length > 1
-  // Preço único: o modelo de dados atual não tem preço por unidade.
-  // Quando entrar, trocar por preço da `unit` selecionada (ver room-page-decisoes-v1).
-  const price = room.priceFrom
+  // preço da unidade selecionada (override em `unitPrices`); senão `priceFrom`
+  const price = room.unitPrices?.[unit] ?? room.priceFrom
   // acento por sala: Ilha = botão dourado de tesouro; Matadouro = vermelho queimado
   const isPirate = room.slug === "ilha-dos-piratas"
   const isMatadouro = room.slug === "matadouro"

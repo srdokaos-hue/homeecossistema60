@@ -13,6 +13,9 @@ export interface Room {
   units: string[]
   /** preço a partir de, por pessoa */
   priceFrom: number
+  /** preço por pessoa específico de uma unidade (sobrepõe `priceFrom` quando a
+   *  unidade selecionada estiver aqui). Unidades fora do mapa usam `priceFrom`. */
+  unitPrices?: Record<string, number>
   /** imagem do pôster */
   poster: string
   /** pôster LIMPO (sem título) p/ os cards quando existir. Fallback: `poster`. */
@@ -70,6 +73,7 @@ export const rooms: Room[] = [
     maxPlayers: 6,
     units: ["ParkShopping", "Santa Úrsula"],
     priceFrom: 84.9,
+    unitPrices: { "Santa Úrsula": 99.9 },
     poster: "/posters/ilha-dos-piratas.webp",
     difficulty: 3,
     family: true,

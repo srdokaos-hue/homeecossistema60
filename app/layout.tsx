@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Anton, Montserrat } from 'next/font/google'
 import { WhatsappButton } from '@/components/whatsapp-button'
+import { MobileBottomNav } from '@/components/mobile-bottom-nav'
 import './globals.css'
 
 const anton = Anton({
@@ -60,6 +61,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         {children}
         <WhatsappButton />
+        <MobileBottomNav />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

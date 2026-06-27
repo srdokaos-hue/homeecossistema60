@@ -194,6 +194,8 @@ export function KingsOfEscape() {
       id="ranking"
       className="border-t border-[rgba(212,175,55,0.2)] bg-[var(--color-carbon)] py-12 md:py-16"
     >
+      {/* âncora de navegação (bottom nav mobile "Recordes") */}
+      <span id="kings" aria-hidden="true" className="block scroll-mt-24" />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Texto centralizado */}
         <div className="flex flex-col items-center gap-4 text-center">

@@ -8,6 +8,7 @@ import { RoomReserveCard } from "@/components/room-reserve-card"
 import { RelatedRoomsCarousel } from "@/components/related-rooms-carousel"
 import { RoomDecorPirate } from "@/components/room-decor-pirate"
 import { RoomDecorMatadouro } from "@/components/room-decor-matadouro"
+import { MatadouroIntro } from "@/components/matadouro-intro"
 import { cn } from "@/lib/utils"
 
 /** Pílula clara translúcida das tags do hero */
@@ -40,8 +41,8 @@ export function RoomDetail({ room }: { room: Room }) {
   // recomendações por relevância (tema → unidade → populares), nunca a própria sala
   const relatedRooms = recommendRooms(room, 8)
 
-  // hero no mobile usa o CARTAZ LIMPO da sala (sem título), nunca o bg da página
-  const heroMobileSrc = heroCleanImage(room)
+  // hero (mobile e desktop) usa o CARTAZ LIMPO da sala (sem título), nunca o bg
+  const heroSrc = heroCleanImage(room)
 
   const heroTags = [
     room.family ? "Pra família" : null,
@@ -71,6 +72,8 @@ export function RoomDetail({ room }: { room: Room }) {
         <>
           <div className="matadouro-room-bg" aria-hidden="true" />
           <RoomDecorMatadouro />
+          {/* intro imersiva one-shot por sessão (overlay fixo, não altera layout) */}
+          <MatadouroIntro />
         </>
       )}
 
@@ -89,25 +92,16 @@ export function RoomDetail({ room }: { room: Room }) {
           <div className="flex flex-col gap-7">
             {/* HERO — mobile: cartaz retrato (4/5); desktop (lg+): inalterado */}
             <section className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-[rgba(255,215,120,0.2)] shadow-[0_28px_80px_rgba(0,0,0,0.55),0_0_40px_rgba(216,170,53,0.08)] sm:aspect-[3/4] lg:aspect-auto lg:h-[460px]">
-              {/* MOBILE/tablet (<lg): CARTAZ LIMPO da sala (sem título embutido),
-                  NÃO o background da página. Fallback = pôster. */}
+              {/* CARTAZ LIMPO da sala (sem título embutido), NÃO o background da
+                  página. Crop retrato no mobile, paisagem no desktop (lg+).
+                  Fallback = pôster, p/ salas sem cartaz limpo. */}
               <Image
-                src={heroMobileSrc}
+                src={heroSrc}
                 alt={`Cartaz da sala ${room.name}`}
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 70vw"
-                className="object-cover object-center lg:hidden"
-              />
-              {/* DESKTOP (lg+): pôster aprovado, exatamente como antes */}
-              <Image
-                src={room.poster || "/placeholder.svg"}
-                alt={`Pôster da sala ${room.name}`}
-                fill
-                priority
-                sizes="70vw"
-                style={{ objectPosition: room.posterPosition ?? "center" }}
-                className="hidden object-cover lg:block"
+                className="object-cover object-center"
               />
               {/* degradê escuro cinematográfico na base pra leitura do título */}
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-void)] via-[rgba(8,8,10,0.55)] to-transparent" />

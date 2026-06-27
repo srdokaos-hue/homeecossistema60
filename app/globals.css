@@ -567,11 +567,44 @@
     );
     pointer-events: none;
   }
-  /* WhatsApp sobe acima da barra fixa de reserva quando ela existe na página
-     (usa :has, decoupla os dois componentes) — não cobre o botão "Reservar". */
-  body:has(.room-reserve-bar) .whatsapp-fab {
-    bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  /* ----- Bottom navigation (mobile) ----- */
+  :root {
+    --bottom-nav-h: calc(3.75rem + env(safe-area-inset-bottom));
   }
+  /* conteúdo não fica sob a bottom nav; se a página tiver barra de reserva,
+     reserva espaço pras duas. */
+  body {
+    padding-bottom: var(--bottom-nav-h);
+  }
+  body:has(.room-reserve-bar) {
+    padding-bottom: calc(var(--bottom-nav-h) + 4.25rem);
+  }
+  /* a barra fixa de reserva sobe pra cima da bottom nav */
+  .room-reserve-bar {
+    bottom: var(--bottom-nav-h);
+    padding-bottom: 0.625rem;
+  }
+  /* WhatsApp acima da bottom nav; mais acima ainda se houver barra de reserva */
+  .whatsapp-fab {
+    bottom: calc(var(--bottom-nav-h) + 0.85rem);
+  }
+  body:has(.room-reserve-bar) .whatsapp-fab {
+    bottom: calc(var(--bottom-nav-h) + 5rem);
+  }
+}
+
+/* Intro do Matadouro: a cena "acende" como uma lâmpada elétrica instável. */
+@keyframes matadouro-intro-flicker {
+  0% { opacity: 0; }
+  8% { opacity: 0.2; }
+  12% { opacity: 0.03; }
+  22% { opacity: 0.5; }
+  28% { opacity: 0.08; }
+  42% { opacity: 0.72; }
+  50% { opacity: 0.22; }
+  68% { opacity: 0.95; }
+  78% { opacity: 0.55; }
+  100% { opacity: 1; }
 }
 
 @keyframes cryptex-shake {

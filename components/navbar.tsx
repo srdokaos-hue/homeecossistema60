@@ -86,23 +86,25 @@ export function Navbar() {
           <CartButton />
           <button
             type="button"
-            className="hidden h-11 items-center rounded-full px-4 text-[11px] font-bold uppercase tracking-[0.06em] text-white transition-colors hover:text-[var(--color-gold)] sm:flex"
+            className="hidden h-11 items-center rounded-full px-4 text-[11px] font-bold uppercase tracking-[0.06em] text-white transition-colors hover:text-[var(--color-gold)] lg:flex"
           >
             Entrar
           </button>
           <a
             href="#salas"
-            className="hidden h-11 items-center rounded-full bg-[var(--color-blood)] px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-white transition-colors hover:bg-[var(--color-blood-dark)] sm:flex"
+            className="hidden h-11 items-center rounded-full bg-[var(--color-blood)] px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-white transition-colors hover:bg-[var(--color-blood-dark)] lg:flex"
           >
             Reservar Agora
           </a>
+          {/* hambúrguer some no mobile (<lg) — lá a navegação é a bottom nav.
+              Continua no tablet (lg–xl); no desktop (xl) viram os links centrais. */}
           <button
             type="button"
             aria-label="Abrir menu"
             aria-expanded={mobileOpen}
             aria-controls="mobile-drawer"
             onClick={() => setMobileOpen(true)}
-            className="flex size-11 items-center justify-center rounded-full text-white xl:hidden"
+            className="hidden size-11 items-center justify-center rounded-full text-white lg:flex xl:hidden"
           >
             <Menu className="size-6" />
           </button>
@@ -117,7 +119,7 @@ export function Navbar() {
         onClick={close}
         aria-hidden="true"
         className={cn(
-          "fixed inset-0 z-[90] bg-black/60 backdrop-blur-[2px] transition-opacity duration-300 xl:hidden",
+          "fixed inset-0 z-[90] hidden bg-black/60 backdrop-blur-[2px] transition-opacity duration-300 lg:block xl:hidden",
           mobileOpen ? "opacity-100" : "pointer-events-none opacity-0",
         )}
       />
@@ -127,7 +129,7 @@ export function Navbar() {
         aria-label="Menu de navegação"
         aria-hidden={!mobileOpen}
         className={cn(
-          "fixed inset-y-0 right-0 z-[100] flex w-[85%] max-w-sm flex-col border-l border-[rgba(212,175,55,0.18)] bg-[var(--color-void)] shadow-[0_0_60px_rgba(0,0,0,0.6)] transition-transform duration-300 will-change-transform xl:hidden",
+          "fixed inset-y-0 right-0 z-[100] hidden w-[85%] max-w-sm flex-col border-l border-[rgba(212,175,55,0.18)] bg-[var(--color-void)] shadow-[0_0_60px_rgba(0,0,0,0.6)] transition-transform duration-300 will-change-transform lg:flex xl:hidden",
           mobileOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
