@@ -31,7 +31,7 @@ type SheetItem = {
 const ITEMS: SheetItem[] = [
   { label: "Empresas", href: "/#escape-analysis", icon: Building2 },
   { label: "Escape Prime", href: "/#escape-prime", icon: Gem },
-  { label: "Kings of the Escape", href: "/#kings", icon: Crown },
+  { label: "Recordes", href: "/#kings", icon: Crown },
   { label: "Contato", href: whatsappHref(), icon: MessageCircle, external: true },
   { label: "Quem Somos", href: "#", icon: Users, pending: true },
   { label: "Loja", href: "#", icon: ShoppingBag, pending: true },

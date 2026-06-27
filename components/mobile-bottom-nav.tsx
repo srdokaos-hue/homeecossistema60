@@ -37,11 +37,12 @@ function IconKey({ className }: IconProps) {
     </svg>
   )
 }
-function IconCrown({ className }: IconProps) {
+function IconBuilding({ className }: IconProps) {
   return (
     <svg {...sv(className)}>
-      <path d="M3 7.5 6.5 15h11L21 7.5l-4.5 3.5L12 5 7.5 11 3 7.5Z" />
-      <path d="M6 18.5h12" />
+      <rect x="5" y="3" width="14" height="18" rx="1" />
+      <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2" />
+      <path d="M10 21v-3h4v3" />
     </svg>
   )
 }
@@ -74,8 +75,8 @@ type NavLink = {
 const LINKS: NavLink[] = [
   { key: "inicio", label: "Início", href: "/", Icon: IconHome, isActive: (p) => p === "/" },
   { key: "salas", label: "Salas", href: "/salas", Icon: IconKey, isActive: (p) => p.startsWith("/salas") },
-  { key: "recordes", label: "Recordes", href: "/#kings", Icon: IconCrown },
   { key: "festas", label: "Festas", href: "/#escape-party", Icon: IconConfetti },
+  { key: "empresas", label: "Empresas", href: "/#escape-analysis", Icon: IconBuilding },
 ]
 
 export function MobileBottomNav() {

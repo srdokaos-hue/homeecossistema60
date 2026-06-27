@@ -80,7 +80,8 @@ export function Hero() {
           <p className="max-w-[480px] text-[15px] leading-relaxed text-[var(--color-ash)]">
             Trancados num cenário real, você e sua equipe resolvem enigmas e
             desafiam o relógio.{" "}
-            <span className="font-semibold text-white">
+            {/* trecho extra só no tablet/desktop (sm+); no mobile o hero respira */}
+            <span className="hidden font-semibold text-white sm:inline">
               Piratas, magia, investigação, suspense. São 16 histórias, uma só
               missão: escapar em 60 minutos.
             </span>
