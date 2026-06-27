@@ -1,10 +1,12 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Play, Star } from "lucide-react"
+import { ArrowLeft, ChevronDown, Play, Star } from "lucide-react"
 import { heroCleanImage, recommendRooms, type Room } from "@/data/rooms"
 import { DifficultyMeter } from "@/components/difficulty-meter"
 import { DualGameBadge, TopPlayedBadge } from "@/components/room-badges"
 import { RoomReserveCard } from "@/components/room-reserve-card"
+import { RoomReserveMobile } from "@/components/room-reserve-mobile"
+import { RoomGalleryMobile } from "@/components/room-gallery-mobile"
 import { RelatedRoomsCarousel } from "@/components/related-rooms-carousel"
 import { RoomDecorPirate } from "@/components/room-decor-pirate"
 import { RoomDecorMatadouro } from "@/components/room-decor-matadouro"
@@ -65,7 +67,7 @@ export function RoomDetail({ room }: { room: Room }) {
       {isPirate && (
         <>
           <div className="pirate-room-bg" aria-hidden="true" />
-          <RoomDecorPirate />
+          <RoomDecorPirate assetsDir={room.theme?.assetsDir ?? "/rooms/ilha-dos-piratas"} />
         </>
       )}
       {isMatadouro && (
@@ -143,13 +145,29 @@ export function RoomDetail({ room }: { room: Room }) {
                 <p className="mt-1 text-[14px] italic text-[var(--color-ash)]">
                   {room.tagline}
                 </p>
+
+                {/* TRAILER (mobile): botão rotulado FORA do título, abaixo do
+                    subtítulo, à esquerda — sem sobrepor o nome da sala. Vídeo
+                    ainda não disponível. Some no desktop (lá fica o ▶ no canto). */}
+                <button
+                  type="button"
+                  aria-label="Assistir trailer"
+                  className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-[rgba(10,10,10,0.6)] py-2 pl-2.5 pr-4 text-[12px] font-bold uppercase tracking-[0.06em] text-white backdrop-blur-sm transition-colors hover:border-[var(--color-blood)] lg:hidden"
+                >
+                  <span className="flex size-7 items-center justify-center rounded-full bg-[var(--color-blood)]">
+                    <Play className="size-3.5 translate-x-px fill-white" />
+                  </span>
+                  Assistir Trailer
+                </button>
               </div>
 
-              {/* play (vídeo ainda não disponível) */}
+              {/* play desktop (▶ no rodapé direito, conforme doc desktop).
+                  Vídeo ainda não disponível. Some no mobile (lá vira botão
+                  rotulado abaixo do subtítulo). */}
               <button
                 type="button"
                 aria-label="Assistir prévia em vídeo"
-                className="soft-pulse absolute bottom-5 right-5 flex size-12 items-center justify-center rounded-full bg-[var(--color-blood)] text-white transition-colors hover:bg-[var(--color-blood-dark)]"
+                className="soft-pulse absolute bottom-5 right-5 hidden size-12 items-center justify-center rounded-full bg-[var(--color-blood)] text-white transition-colors hover:bg-[var(--color-blood-dark)] lg:flex"
               >
                 <Play className="size-5 translate-x-0.5 fill-white" />
               </button>
@@ -182,6 +200,10 @@ export function RoomDetail({ room }: { room: Room }) {
               </StatCard>
             </div>
 
+            {/* RESERVA (mobile): seletor de unidade inline + barra fixa no rodapé.
+                Some no desktop (lá vale a sidebar sticky). */}
+            <RoomReserveMobile room={room} />
+
             {/* GALERIA */}
             <section className="glass-panel glass-strong rounded-2xl p-5">
               <h2 className="font-display text-[22px] text-white">
@@ -190,30 +212,58 @@ export function RoomDetail({ room }: { room: Room }) {
               <p className="mt-1 inline-block rounded border border-dashed border-[var(--color-blood)]/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--color-blood)]">
                 Aguardando fotos reais
               </p>
-              <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-[var(--color-blood)]/40 bg-white/[0.02] text-[var(--color-ash)]/40"
-                    aria-hidden="true"
-                  >
-                    <span className="text-[11px] uppercase tracking-wide">Foto {i + 1}</span>
-                  </div>
-                ))}
+              {/* mobile: carrossel com dots · desktop (lg+): grade 4 colunas (inalterada) */}
+              <div className="mt-4">
+                <RoomGalleryMobile count={4} />
+                <div className="hidden grid-cols-4 gap-3 lg:grid">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-[var(--color-blood)]/40 bg-white/[0.02] text-[var(--color-ash)]/40"
+                      aria-hidden="true"
+                    >
+                      <span className="text-[11px] uppercase tracking-wide">Foto {i + 1}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </section>
 
-            {/* HISTÓRIA */}
+            {/* HISTÓRIA — mobile: accordion recolhível (<details>, sem JS, respeita
+                reduced-motion) · desktop (lg+): texto aberto (inalterado) */}
             <section className="glass-panel glass-strong rounded-2xl p-5">
-              <h2 className="font-display text-[22px] text-white">
-                A <span className="text-[var(--color-gold)]">História</span>
-              </h2>
-              <p className="mt-1 inline-block rounded border border-dashed border-[var(--color-blood)]/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--color-blood)]">
-                Aguardando texto real
-              </p>
-              <p className="mt-4 text-[14px] leading-relaxed text-[var(--color-ash)]/70">
-                A sinopse oficial desta sala será publicada em breve.
-              </p>
+              {/* mobile */}
+              <details className="group lg:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+                  <h2 className="font-display text-[22px] text-white">
+                    A <span className="text-[var(--color-gold)]">História</span>
+                  </h2>
+                  <span
+                    className="text-[var(--color-gold)] transition-transform group-open:rotate-180"
+                    aria-hidden="true"
+                  >
+                    <ChevronDown className="size-5" />
+                  </span>
+                </summary>
+                <p className="mt-2 inline-block rounded border border-dashed border-[var(--color-blood)]/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--color-blood)]">
+                  Aguardando texto real
+                </p>
+                <p className="mt-3 text-[14px] leading-relaxed text-[var(--color-ash)]/70">
+                  A sinopse oficial desta sala será publicada em breve.
+                </p>
+              </details>
+              {/* desktop */}
+              <div className="hidden lg:block">
+                <h2 className="font-display text-[22px] text-white">
+                  A <span className="text-[var(--color-gold)]">História</span>
+                </h2>
+                <p className="mt-1 inline-block rounded border border-dashed border-[var(--color-blood)]/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--color-blood)]">
+                  Aguardando texto real
+                </p>
+                <p className="mt-4 text-[14px] leading-relaxed text-[var(--color-ash)]/70">
+                  A sinopse oficial desta sala será publicada em breve.
+                </p>
+              </div>
             </section>
 
             {/* RANKING */}
@@ -222,7 +272,8 @@ export function RoomDetail({ room }: { room: Room }) {
                 <h2 className="font-display text-[22px] text-white">
                   Ranking do <span className="text-[var(--color-gold)]">Mês</span>
                 </h2>
-                <span className="text-[12px] text-[var(--color-ash)]">
+                {/* recorde all-time inline só no desktop (no mobile vira card) */}
+                <span className="hidden text-[12px] text-[var(--color-ash)] lg:inline">
                   Recorde Absoluto:{" "}
                   <span className="font-bold text-[var(--color-gold)]">38:12</span>
                 </span>
@@ -231,35 +282,62 @@ export function RoomDetail({ room }: { room: Room }) {
                 Exemplo · reseta todo mês
               </p>
 
-              {/* divisor simples e elegante: filete dourado discreto que esmaece
-                  nas pontas (corda removida — não estava funcionando visualmente) */}
-              <div
-                className="my-4 h-px bg-gradient-to-r from-transparent via-[var(--color-gold)]/35 to-transparent"
-                aria-hidden="true"
-              />
+              {/* MOBILE: 2 cards lado a lado (Recorde Absoluto destacado + Recorde
+                  do Mês), sem a lista 1/2/3. Some no desktop. */}
+              <div className="mt-4 grid grid-cols-2 gap-3 lg:hidden">
+                <div className="rounded-xl border border-[var(--color-gold)]/45 bg-[var(--color-gold)]/[0.06] p-3.5 shadow-[0_0_22px_rgba(216,170,53,0.14)]">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-gold)]">
+                    Recorde Absoluto
+                  </p>
+                  <p className="mt-1.5 font-display text-[26px] leading-none tabular-nums text-white">
+                    38:12
+                  </p>
+                  <p className="mt-1.5 text-[11px] font-semibold text-[var(--color-ash)]">
+                    Os Bucaneiros
+                  </p>
+                </div>
+                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3.5">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-ash)]/70">
+                    Recorde do Mês
+                  </p>
+                  <p className="mt-1.5 font-display text-[26px] leading-none tabular-nums text-white">
+                    41:05
+                  </p>
+                  <p className="mt-1.5 text-[11px] font-semibold text-[var(--color-ash)]">
+                    Tripulação Alpha
+                  </p>
+                </div>
+              </div>
 
-              <table className="w-full text-left text-[13px]">
-                <thead>
-                  <tr className="text-[10px] uppercase tracking-[0.08em] text-[var(--color-ash)]/60">
-                    <th className="w-10 pb-2 font-semibold">#</th>
-                    <th className="pb-2 font-semibold">Equipe</th>
-                    <th className="pb-2 text-right font-semibold">Tempo</th>
-                  </tr>
-                </thead>
-                <tbody className="text-[var(--color-ash)]">
-                  {[
-                    ["1", "Os Bucaneiros", "38:12"],
-                    ["2", "Tripulação Alpha", "41:05"],
-                    ["3", "Caça-Tesouros", "43:18"],
-                  ].map(([pos, team, time]) => (
-                    <tr key={pos} className="border-t border-white/[0.06]">
-                      <td className="py-2.5 font-display text-[16px] text-[var(--color-gold)]">{pos}</td>
-                      <td className="py-2.5 font-semibold text-white">{team}</td>
-                      <td className="py-2.5 text-right tabular-nums">{time}</td>
+              {/* DESKTOP: filete dourado + tabela de posições (inalterado) */}
+              <div className="hidden lg:block">
+                <div
+                  className="my-4 h-px bg-gradient-to-r from-transparent via-[var(--color-gold)]/35 to-transparent"
+                  aria-hidden="true"
+                />
+                <table className="w-full text-left text-[13px]">
+                  <thead>
+                    <tr className="text-[10px] uppercase tracking-[0.08em] text-[var(--color-ash)]/60">
+                      <th className="w-10 pb-2 font-semibold">#</th>
+                      <th className="pb-2 font-semibold">Equipe</th>
+                      <th className="pb-2 text-right font-semibold">Tempo</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="text-[var(--color-ash)]">
+                    {[
+                      ["1", "Os Bucaneiros", "38:12"],
+                      ["2", "Tripulação Alpha", "41:05"],
+                      ["3", "Caça-Tesouros", "43:18"],
+                    ].map(([pos, team, time]) => (
+                      <tr key={pos} className="border-t border-white/[0.06]">
+                        <td className="py-2.5 font-display text-[16px] text-[var(--color-gold)]">{pos}</td>
+                        <td className="py-2.5 font-semibold text-white">{team}</td>
+                        <td className="py-2.5 text-right tabular-nums">{time}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </section>
 
             {/* AVALIAÇÕES (placeholder até termos dados reais) */}
@@ -290,9 +368,17 @@ export function RoomDetail({ room }: { room: Room }) {
                 ))}
               </div>
             </section>
+
+            {/* Regulamento (mobile): no desktop ele vive no card de reserva, que
+                some no mobile, então aparece aqui no fluxo. */}
+            <p className="text-center text-[12px] text-[var(--color-ash)]/70 lg:hidden">
+              <a href="#" className="underline underline-offset-2 hover:text-[var(--color-gold)]">
+                Ver regulamento do jogo
+              </a>
+            </p>
           </div>
 
-          {/* SIDEBAR DE RESERVA */}
+          {/* SIDEBAR DE RESERVA (só desktop) */}
           <aside>
             <RoomReserveCard room={room} />
           </aside>

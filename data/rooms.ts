@@ -2,6 +2,14 @@ export type RoomGenre = "Aventura" | "Investigação" | "Suspense"
 export type RoomAge = "Livre" | "12 anos"
 export type RoomTag = "Pra família" | "Não assusta" | "Populares" | "12+"
 
+/** tema visual da página individual da sala (assets imersivos por sala) */
+export interface RoomTheme {
+  /** pasta dos decorativos da sala em /public (ex: "/rooms/ilha-dos-piratas").
+   *  Os componentes de decoração leem os caminhos daqui, não hardcoded, pra que
+   *  outras salas reusem a mesma página trocando só a pasta. */
+  assetsDir: string
+}
+
 export interface Room {
   slug: string
   name: string
@@ -36,6 +44,9 @@ export interface Room {
   topPlayed?: boolean
   /** destacado na vitrine inicial "Todas" */
   featured?: boolean
+  /** tema visual imersivo (só salas com pasta de assets própria; demais usam
+   *  fundo escuro padrão) */
+  theme?: RoomTheme
 }
 
 export const GENRES: ("Todas" | RoomGenre)[] = [
@@ -80,6 +91,7 @@ export const rooms: Room[] = [
     scares: false,
     popular: false,
     featured: true,
+    theme: { assetsDir: "/rooms/ilha-dos-piratas" },
   },
   {
     slug: "profecia-orbe-magico",
@@ -300,6 +312,7 @@ export const rooms: Room[] = [
     family: false,
     scares: true,
     popular: false,
+    theme: { assetsDir: "/rooms/matadouro" },
   },
   {
     slug: "fnaf",

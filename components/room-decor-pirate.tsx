@@ -14,9 +14,72 @@
  * opacidades variados pra dar profundidade. Âncora: decoração náutica discreta
  * no canto inferior direito, abaixo do card de reserva (área aberta do cenário).
  */
-export function RoomDecorPirate() {
+export function RoomDecorPirate({ assetsDir }: { assetsDir: string }) {
   return (
     <>
+      {/* CAMADA MOBILE/TABLET (< md) — decoração COM PARCIMÔNIA: poucos elementos
+          pequenos, opacidade baixa, em pontos estratégicos, longe do texto. As
+          camadas desktop (md+/lg+/xl+ abaixo) tomam conta a partir de md, então
+          aqui é md:hidden pra não dobrar. Caminhos vêm de `assetsDir` (data),
+          não hardcoded. Estáticos (sem movimento → nada a fazer p/ reduced-motion). */}
+      <div className="pirate-decor md:hidden" aria-hidden="true">
+        {/* moedas discretas no canto inferior do hero */}
+        <div
+          className="pirate-coins-sparse"
+          style={{
+            top: 300,
+            right: "4%",
+            width: 116,
+            height: 78,
+            opacity: 0.4,
+            transform: "rotate(7deg)",
+            backgroundImage: `url('${assetsDir}/coins-sparse.webp')`,
+            filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.45))",
+          }}
+        />
+        {/* uma gaivota pequena no topo */}
+        <div
+          className="pirate-seagull"
+          style={{
+            top: 38,
+            left: "8%",
+            width: 46,
+            height: 35,
+            opacity: 0.5,
+            backgroundImage: `url('${assetsDir}/seagull-01.webp')`,
+            filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.32))",
+          }}
+        />
+        {/* chapéu de palha sutil perto do bloco do título */}
+        <div
+          className="pirate-hat"
+          style={{
+            top: 250,
+            left: "5%",
+            width: 96,
+            height: 72,
+            opacity: 0.34,
+            transform: "rotate(-10deg)",
+            backgroundImage: `url('${assetsDir}/straw-hat.webp')`,
+            filter: "drop-shadow(0 8px 14px rgba(0,0,0,0.4))",
+          }}
+        />
+        {/* âncora bem discreta lá embaixo */}
+        <div
+          className="pirate-anchor"
+          style={{
+            bottom: 120,
+            right: "6%",
+            width: 70,
+            height: 110,
+            opacity: 0.28,
+            transform: "rotate(6deg)",
+            backgroundImage: `url('${assetsDir}/anchor.webp')`,
+            filter: "blur(0.3px) drop-shadow(0 10px 18px rgba(0,0,0,0.45))",
+          }}
+        />
+      </div>
+
       {/* CAMADA TRASEIRA — atrás dos painéis */}
       <div className="pirate-decor" aria-hidden="true">
         {/* partículas douradas perto do hero (screen pra brilhar) */}

@@ -38,8 +38,9 @@ export function RoomReserveCard({ room }: { room: Room }) {
 
   return (
     <>
-      {/* Card principal: sticky no desktop, fluxo normal no mobile */}
-      <div className="glass-panel rounded-2xl p-5 lg:sticky lg:top-24">
+      {/* Card completo: só DESKTOP (sticky). No mobile vale o `RoomReserveMobile`
+          (seletor inline + barra fixa), pra não duplicar reserva na tela. */}
+      <div className="glass-panel hidden rounded-2xl p-5 lg:sticky lg:top-24 lg:block">
         {/* Unidade: pílulas se houver mais de uma; senão texto estático */}
         {multiUnit ? (
           <div className="flex flex-wrap gap-2">
@@ -124,29 +125,7 @@ export function RoomReserveCard({ room }: { room: Room }) {
           </a>
         </p>
       </div>
-
-      {/* Barra fixa no rodapé (mobile/tablet) — padrão Airbnb/OpenTable.
-          A classe `room-reserve-bar` é usada pelo CSS p/ levantar o WhatsApp
-          acima dela no mobile. pb com safe-area (notch do iPhone). */}
-      <div className="room-reserve-bar fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t border-white/10 bg-[rgba(12,12,14,0.94)] px-4 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
-        <div>
-          <div className="font-display text-[22px] leading-none text-white">
-            R$ {brl(price)}
-          </div>
-          <div className="text-[10px] text-[var(--color-ash)]">
-            por pessoa · mín. {room.minPlayers}
-          </div>
-        </div>
-        <button
-          type="button"
-          className={cn(
-            "flex h-11 max-w-[58%] flex-1 items-center justify-center rounded-full text-[12px] font-bold uppercase tracking-[0.06em]",
-            ctaClass,
-          )}
-        >
-          Reservar Agora
-        </button>
-      </div>
+      {/* No mobile, a reserva (barra fixa + seletor inline) é o `RoomReserveMobile`. */}
     </>
   )
 }
