@@ -1,8 +1,21 @@
 "use client"
 
 import Image from "next/image"
-import { useEffect, useRef, useState } from "react"
-import { ArrowRight, ChevronLeft, ChevronRight, Clock, Crown, HelpCircle } from "lucide-react"
+import { useEffect, useRef, useState, type TouchEvent } from "react"
+import {
+  ArrowRight,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Crown,
+  HelpCircle,
+  Lock,
+  MapPin,
+  Share2,
+  Trophy,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Eyebrow, SectionTitle } from "@/components/section-heading"
 
@@ -150,6 +163,320 @@ function RecordCard({
   )
 }
 
+/* ---------------------------------------------------------------------------
+   MOBILE — cover-flow (apenas < sm). Estado próprio, isolado do desktop.
+--------------------------------------------------------------------------- */
+
+function shareRecord(record: RecordEntry) {
+  if (typeof navigator === "undefined" || !navigator.share) return
+  const text = record.team
+    ? `${record.team} é recorde em ${record.room}: ${record.time}. Bora superar?`
+    : `${record.room} ainda não tem recorde este mês. Seja a primeira equipe!`
+  navigator.share({ title: "Kings of the Escape · 60 Minutos", text }).catch(() => {})
+}
+
+/** Card central do cover-flow (campeã em destaque). Vizinhos usam só a foto. */
+function MobileCard({
+  record,
+  photo,
+  active,
+}: {
+  record: RecordEntry
+  photo: string
+  active: boolean
+}) {
+  const poster = ROOM_POSTERS[record.room] ?? "/placeholder.svg"
+  const isEmpty = !record.team
+
+  return (
+    <div
+      className={cn(
+        "relative aspect-[3/4] w-full overflow-hidden rounded-[18px] border bg-[#0b0b0d] shadow-[0_24px_60px_-18px_rgba(0,0,0,0.85)]",
+        isEmpty
+          ? "border-dashed border-[rgba(212,175,55,0.55)]"
+          : "border-[rgba(212,175,55,0.28)]",
+      )}
+    >
+      <Image
+        src={isEmpty ? poster : photo}
+        alt={isEmpty ? `Sala ${record.room}` : `Equipe ${record.team}`}
+        fill
+        sizes="78vw"
+        className={cn(
+          "object-cover object-top",
+          isEmpty && "brightness-[0.35] grayscale-[0.4]",
+        )}
+      />
+      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[var(--color-void)] via-[var(--color-void)]/70 to-transparent" />
+
+      {/* Conteúdo rico só no card ativo (vizinhos ficam desfocados) */}
+      {active && !isEmpty && (
+        <>
+          {/* Bandeira de posição */}
+          <div className="absolute left-0 top-5 z-10 flex items-center gap-1 rounded-r-full bg-[var(--color-gold)] py-1 pl-3 pr-4 shadow-[0_6px_16px_-4px_rgba(212,175,55,0.6)]">
+            <Crown className="size-3.5 text-[var(--color-gold-ink)]" />
+            <span className="font-display text-[15px] leading-none text-[var(--color-gold-ink)]">
+              1º
+            </span>
+          </div>
+
+          {/* Compartilhar */}
+          <button
+            type="button"
+            onClick={() => shareRecord(record)}
+            aria-label="Compartilhar recorde"
+            className="absolute right-3 top-3 z-10 flex size-9 items-center justify-center rounded-full border border-[rgba(212,175,55,0.3)] bg-[var(--color-void)]/60 text-[var(--color-gold)] backdrop-blur transition-colors hover:bg-[rgba(212,175,55,0.15)]"
+          >
+            <Share2 className="size-4" />
+          </button>
+
+          {/* Bloco inferior */}
+          <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-5">
+            <span className="mb-1 flex w-fit items-center gap-1.5 rounded-full bg-[rgba(212,175,55,0.15)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--color-gold)]">
+              <Crown className="size-3" /> Campeãs do mês
+            </span>
+            <span className="w-fit -rotate-1 bg-[var(--color-gold)] px-2 py-0.5 font-display text-[22px] leading-tight text-[var(--color-gold-ink)]">
+              {record.team}
+            </span>
+            <span className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--color-ash)]">
+              <Lock className="size-3.5 text-[var(--color-gold)]" /> {record.room}
+            </span>
+            <div className="mt-1 flex items-end gap-2">
+              <span className="pb-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-ash)]">
+                Tempo
+              </span>
+              <span className="flex items-center gap-1.5 font-display text-[40px] leading-none text-white">
+                <Clock className="size-6 text-[var(--color-gold)]" />
+                {record.time}
+              </span>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Card vazio em destaque: ninguém conquistou a coroa */}
+      {active && isEmpty && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 p-6 text-center">
+          <span className="flex size-16 items-center justify-center rounded-full border-2 border-[rgba(212,175,55,0.55)] bg-[var(--color-void)]/70 shadow-[0_0_24px_-4px_rgba(212,175,55,0.5)]">
+            <HelpCircle className="size-8 text-[var(--color-gold)]" />
+          </span>
+          <span className="font-display text-[20px] leading-tight text-[var(--color-cream)] text-balance">
+            Ninguém conquistou a coroa este mês
+          </span>
+          <span className="text-[13px] leading-snug text-[var(--color-ash)] text-balance">
+            Seja a primeira equipe desta sala.
+          </span>
+          <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-gold)]">
+            {record.room}
+          </span>
+          <a
+            href="#salas"
+            className="mt-1 flex h-11 items-center gap-2 rounded-full bg-[var(--color-blood)] px-6 text-[12px] font-bold uppercase tracking-[0.06em] text-white transition-colors hover:bg-[var(--color-blood-dark)]"
+          >
+            Reservar
+            <ArrowRight className="size-4" />
+          </a>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function KingsMobile() {
+  const [storeIndex, setStoreIndex] = useState(0)
+  const [active, setActive] = useState(0)
+  const [open, setOpen] = useState(false)
+  const touchX = useRef<number | null>(null)
+  const touchY = useRef<number | null>(null)
+
+  const store = STORES[storeIndex]
+  const records = store.records
+  const count = records.length
+
+  function selectStore(i: number) {
+    setStoreIndex(i)
+    setActive(0)
+    setOpen(false)
+  }
+
+  function go(dir: number) {
+    setActive((a) => Math.min(Math.max(a + dir, 0), count - 1))
+  }
+
+  function onTouchStart(e: TouchEvent) {
+    touchX.current = e.touches[0].clientX
+    touchY.current = e.touches[0].clientY
+  }
+
+  function onTouchEnd(e: TouchEvent) {
+    if (touchX.current === null) return
+    const dx = e.changedTouches[0].clientX - touchX.current
+    const dy = e.changedTouches[0].clientY - (touchY.current ?? 0)
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      go(dx < 0 ? 1 : -1)
+    }
+    touchX.current = null
+    touchY.current = null
+  }
+
+  return (
+    <div className="sm:hidden">
+      {/* Dropdown de loja */}
+      <div className="relative mx-auto mt-7 w-fit">
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          className="flex items-center gap-2 rounded-full border border-[rgba(212,175,55,0.4)] bg-[var(--color-void)]/60 px-5 py-2.5 backdrop-blur transition-colors hover:bg-[rgba(212,175,55,0.08)]"
+        >
+          <MapPin className="size-4 text-[var(--color-gold)]" />
+          <span className="font-display text-[18px] uppercase tracking-wide text-[var(--color-cream)]">
+            {store.name}
+          </span>
+          <ChevronDown
+            className={cn(
+              "size-4 text-[var(--color-gold)] transition-transform",
+              open && "rotate-180",
+            )}
+          />
+        </button>
+
+        {open && (
+          <>
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setOpen(false)}
+              aria-hidden="true"
+            />
+            <ul
+              role="listbox"
+              className="absolute left-1/2 top-full z-50 mt-2 w-60 -translate-x-1/2 overflow-hidden rounded-2xl border border-[rgba(212,175,55,0.25)] bg-[var(--color-carbon)] shadow-[0_24px_60px_-18px_rgba(0,0,0,0.85)]"
+            >
+              {STORES.map((s, i) => (
+                <li key={s.name} role="option" aria-selected={i === storeIndex}>
+                  <button
+                    type="button"
+                    onClick={() => selectStore(i)}
+                    className={cn(
+                      "flex w-full items-center justify-between px-4 py-3 text-left text-[14px] font-semibold uppercase tracking-[0.06em] transition-colors",
+                      i === storeIndex
+                        ? "bg-[rgba(212,175,55,0.12)] text-[var(--color-gold)]"
+                        : "text-[var(--color-cream)] hover:bg-[rgba(212,175,55,0.06)]",
+                    )}
+                  >
+                    {s.name}
+                    {i === storeIndex && <Check className="size-4" />}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+
+      <p className="mt-2 text-center text-[12px] font-semibold uppercase tracking-[0.1em] text-[var(--color-ash)]">
+        Campeãs de {MONTH_LABEL}
+      </p>
+
+      {/* Cover-flow */}
+      <div
+        className="relative mt-6 h-[430px] w-full overflow-hidden"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
+        {records.map((record, i) => {
+          const offset = i - active
+          const abs = Math.abs(offset)
+          const visible = abs <= 1
+          const scale = offset === 0 ? 1 : 0.8
+          return (
+            <div
+              key={`${record.room}-${i}`}
+              onClick={() => offset !== 0 && setActive(i)}
+              aria-hidden={!visible}
+              className={cn(
+                "absolute left-1/2 top-1/2 w-[74vw] max-w-[310px] transition-[transform,opacity] duration-300 ease-out",
+                offset !== 0 && "cursor-pointer blur-[1.5px] brightness-[0.5]",
+                !visible && "pointer-events-none",
+              )}
+              style={{
+                zIndex: 20 - abs,
+                opacity: visible ? 1 : 0,
+                transform: `translate(-50%, -50%) translateX(${offset * 60}%) scale(${scale})`,
+              }}
+            >
+              <MobileCard
+                record={record}
+                photo={TEAM_PHOTOS[i % TEAM_PHOTOS.length]}
+                active={offset === 0}
+              />
+            </div>
+          )
+        })}
+
+        {/* Setas circulares douradas */}
+        <button
+          type="button"
+          onClick={() => go(-1)}
+          disabled={active === 0}
+          aria-label="Recorde anterior"
+          className="absolute left-1 top-1/2 z-40 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(212,175,55,0.4)] bg-[var(--color-void)]/70 text-[var(--color-gold)] backdrop-blur transition-opacity disabled:opacity-30"
+        >
+          <ChevronLeft className="size-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => go(1)}
+          disabled={active === count - 1}
+          aria-label="Próximo recorde"
+          className="absolute right-1 top-1/2 z-40 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(212,175,55,0.4)] bg-[var(--color-void)]/70 text-[var(--color-gold)] backdrop-blur transition-opacity disabled:opacity-30"
+        >
+          <ChevronRight className="size-5" />
+        </button>
+      </div>
+
+      {/* Dots de paginação (barra alongada marca posição) */}
+      <div className="mt-5 flex items-center justify-center gap-2">
+        {records.map((record, i) => (
+          <button
+            key={`${record.room}-${i}`}
+            type="button"
+            onClick={() => setActive(i)}
+            aria-label={`Ver recorde ${i + 1} de ${count}`}
+            aria-current={i === active}
+            className={cn(
+              "h-2 rounded-full transition-all",
+              i === active
+                ? "w-6 bg-[var(--color-gold)]"
+                : "w-2 bg-[rgba(212,175,55,0.3)]",
+            )}
+          />
+        ))}
+      </div>
+
+      {/* A coroa pode ser sua */}
+      <a
+        href="#salas"
+        className="mx-auto mt-8 flex w-full max-w-[340px] items-center gap-3 rounded-2xl border border-[rgba(212,175,55,0.3)] bg-[rgba(212,175,55,0.06)] px-4 py-4 transition-colors hover:bg-[rgba(212,175,55,0.1)]"
+      >
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[rgba(212,175,55,0.15)] text-[var(--color-gold)]">
+          <Trophy className="size-5" />
+        </span>
+        <span className="flex-1">
+          <span className="block font-display text-[16px] leading-tight text-[var(--color-cream)]">
+            A COROA PODE SER SUA
+          </span>
+          <span className="mt-0.5 block text-[12px] leading-snug text-[var(--color-ash)]">
+            Reserve sua sala e dispute o topo do ranking.
+          </span>
+        </span>
+        <ChevronRight className="size-5 shrink-0 text-[var(--color-gold)]" />
+      </a>
+    </div>
+  )
+}
+
 export function KingsOfEscape() {
   const [storeIndex, setStoreIndex] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -255,33 +582,17 @@ export function KingsOfEscape() {
           </button>
         </div>
 
-        {/* Legenda: loja atual + mês de referência */}
-        <div className="mt-8 flex items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={() => go(-1)}
-            aria-label="Loja anterior"
-            className="flex size-9 items-center justify-center rounded-full border border-[rgba(212,175,55,0.3)] text-[var(--color-gold)] transition-colors hover:bg-[rgba(212,175,55,0.1)] sm:hidden"
-          >
-            <ChevronLeft className="size-4" />
-          </button>
+        {/* Legenda: loja atual + mês de referência (desktop/tablet) */}
+        <div className="mt-8 hidden items-center justify-center gap-3 sm:flex">
           <p className="text-center text-[14px] font-bold uppercase tracking-[0.08em] text-[var(--color-cream)]">
             {store.name}
             <span className="px-1.5 text-[var(--color-gold)]">·</span>
             <span className="text-[var(--color-ash)]">{MONTH_LABEL}</span>
           </p>
-          <button
-            type="button"
-            onClick={() => go(1)}
-            aria-label="Próxima loja"
-            className="flex size-9 items-center justify-center rounded-full border border-[rgba(212,175,55,0.3)] text-[var(--color-gold)] transition-colors hover:bg-[rgba(212,175,55,0.1)] sm:hidden"
-          >
-            <ChevronRight className="size-4" />
-          </button>
         </div>
 
-        {/* Indicadores de loja */}
-        <div className="mt-5 flex items-center justify-center gap-2">
+        {/* Indicadores de loja (desktop/tablet) */}
+        <div className="mt-5 hidden items-center justify-center gap-2 sm:flex">
           {STORES.map((s, i) => (
             <button
               key={s.name}
@@ -299,16 +610,8 @@ export function KingsOfEscape() {
           ))}
         </div>
 
-        {/* Mobile: empilhado */}
-        <div key={`m-${storeIndex}`} className="fan-in mt-8 grid grid-cols-1 gap-4 sm:hidden">
-          {store.records.map((record, i) => (
-            <RecordCard
-              key={`${record.room}-${i}`}
-              record={record}
-              photo={TEAM_PHOTOS[i % TEAM_PHOTOS.length]}
-            />
-          ))}
-        </div>
+        {/* Mobile: cover-flow (loja via dropdown, recordes em carrossel) */}
+        <KingsMobile />
 
         {/* CTAs */}
         <div className="mt-14 flex flex-col items-center gap-4">
