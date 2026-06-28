@@ -19,6 +19,7 @@ O projeto começou prototipado no v0.dev (Vercel) com iteração visual via chat
 - `/docs/metodologia_desenvolvimento.md` — COMO trabalhamos (SDD, fases, anti-AI-slop). Seguir sempre.
 - `/docs/salas-page-decisoes-v1.md` — decisões da página /salas (filtro, card novo, navegação, atmosfera pendente)
 - `/docs/room-page-decisoes-v1.md` — decisões da página individual da sala /salas/[slug] (layout, sidebar, mobile, tema visual)
+- `/docs/paginas-restantes-contexto.md` — contexto e decisões das páginas ainda não construídas (Analysis, Party, Prime completa, Quem Somos, FAQ, Enigmatrix)
 
 ## Metodologia de trabalho (resumo — detalhe em /docs/metodologia_desenvolvimento.md)
 Fluxo SDD por feature: ETAPA 1 Pesquisa (`docs/specs/<feature>/prd.md`) → `/clear` → ETAPA 2 Spec (`docs/specs/<feature>/spec.md`) → `/clear` → ETAPA 3 Implementação arquivo por arquivo → `/review` antes do deploy.
