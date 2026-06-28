@@ -39,6 +39,18 @@ function StatCard({ children }: { children: React.ReactNode }) {
 export function RoomDetail({ room }: { room: Room }) {
   const isPirate = room.slug === "ilha-dos-piratas"
   const isMatadouro = room.slug === "matadouro"
+  const assetsDir = room.theme?.assetsDir
+
+  /** Divisor de corda entre seções (só Ilha, só mobile). Decorativo, lê o
+   *  caminho do tema (não hardcode). Some no desktop (lá não há divisor). */
+  const RopeDivider = () =>
+    isPirate && assetsDir ? (
+      <div
+        className="pirate-rope-divider lg:hidden"
+        aria-hidden="true"
+        style={{ backgroundImage: `url('${assetsDir}/rope-divider.webp')` }}
+      />
+    ) : null
 
   // recomendações por relevância (tema → unidade → populares), nunca a própria sala
   const relatedRooms = recommendRooms(room, 8)
@@ -229,6 +241,8 @@ export function RoomDetail({ room }: { room: Room }) {
               </div>
             </section>
 
+            <RopeDivider />
+
             {/* HISTÓRIA — mobile: accordion recolhível (<details>, sem JS, respeita
                 reduced-motion) · desktop (lg+): texto aberto (inalterado) */}
             <section className="glass-panel glass-strong rounded-2xl p-5">
@@ -266,8 +280,9 @@ export function RoomDetail({ room }: { room: Room }) {
               </div>
             </section>
 
-            {/* RANKING */}
-            <section className="glass-panel glass-strong rounded-2xl p-5">
+            {/* RANKING — bloco-destaque: recebe glow dourado sutil no mobile
+                (pirate-glow-mobile); desktop intacto. */}
+            <section className="glass-panel glass-strong pirate-glow-mobile rounded-2xl p-5">
               <div className="flex items-end justify-between gap-3">
                 <h2 className="font-display text-[22px] text-white">
                   Ranking do <span className="text-[var(--color-gold)]">Mês</span>
@@ -285,7 +300,7 @@ export function RoomDetail({ room }: { room: Room }) {
               {/* MOBILE: 2 cards lado a lado (Recorde Absoluto destacado + Recorde
                   do Mês), sem a lista 1/2/3. Some no desktop. */}
               <div className="mt-4 grid grid-cols-2 gap-3 lg:hidden">
-                <div className="rounded-xl border border-[var(--color-gold)]/45 bg-[var(--color-gold)]/[0.06] p-3.5 shadow-[0_0_22px_rgba(216,170,53,0.14)]">
+                <div className="rounded-xl border border-[var(--color-gold)]/50 bg-[var(--color-gold)]/[0.08] p-3.5 shadow-[0_0_26px_rgba(216,170,53,0.2)]">
                   <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-gold)]">
                     Recorde Absoluto
                   </p>
@@ -340,8 +355,12 @@ export function RoomDetail({ room }: { room: Room }) {
               </div>
             </section>
 
-            {/* AVALIAÇÕES (placeholder até termos dados reais) */}
-            <section className="glass-panel glass-strong rounded-2xl p-5">
+            <RopeDivider />
+
+            {/* AVALIAÇÕES (placeholder até termos dados reais). Card SECUNDÁRIO:
+                vidro translúcido SEM blur no mobile (glass-flat-mobile) pra
+                aliviar paint; desktop mantém o blur. */}
+            <section className="glass-panel glass-flat-mobile glass-strong rounded-2xl p-5">
               <div className="flex items-end justify-between gap-3">
                 <h2 className="font-display text-[22px] text-white">Avaliações</h2>
                 <span className="text-[12px] text-[var(--color-ash)]">— avaliações</span>

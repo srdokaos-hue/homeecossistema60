@@ -430,6 +430,19 @@
   .pirate-particles {
     background-image: url('/rooms/ilha-dos-piratas/golden-particles.webp');
   }
+  /* Divisor de corda entre seções (mobile). Corda horizontal recortada, sutil,
+     centrada. Margens negativas comem parte do gap-7 pra ele "amarrar" as duas
+     seções sem empurrar o layout. Decorativo: não intercepta toque. */
+  .pirate-rope-divider {
+    height: 26px;
+    margin: -0.5rem auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.55;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+  }
 
   /* ===== Tema "Matadouro" (sala individual) =====================================
      Mesmo padrão técnico da Ilha: classes gated por slug, bg com máscara/fade,
@@ -567,6 +580,48 @@
     );
     pointer-events: none;
   }
+
+  /* === Refino imersivo Ilha (mobile) ==========================================
+     O cenário dourado estava sendo apagado por um scrim global forte. Aqui o
+     escurecimento GLOBAL fica leve (deixa o ouro respirar nas bordas/entre
+     seções); a legibilidade do texto fica por conta do scrim LOCAL de cada
+     glass-panel (que já tem fundo translúcido escuro). Só Ilha — Matadouro
+     mantém o scrim mais fechado acima. */
+  .pirate-room-bg::before {
+    background: linear-gradient(
+      to bottom,
+      rgba(5, 6, 7, 0.08) 0%,
+      rgba(5, 6, 7, 0.22) 48%,
+      rgba(5, 6, 7, 0.62) 82%,
+      #050607 100%
+    );
+  }
+  /* Blur mais leve no mobile (custo de paint do backdrop-filter empilhado sobre
+     o cenário); o desktop segue em 18px (inalterado). Só Ilha. */
+  .room-page--ilha-dos-piratas .glass-panel {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  /* Cards SECUNDÁRIOS (avaliações): mesmo vidro translúcido, SEM blur (leveza).
+     Mantém a borda dourada e o fundo; só remove o custo do blur no mobile. */
+  .glass-flat-mobile {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  /* Glow dourado de destaque (mobile): aro suave de "tesouro" nos blocos-chave
+     (ranking/recorde). Desktop não recebe (intacto). */
+  .pirate-glow-mobile {
+    box-shadow:
+      0 18px 40px rgba(0, 0, 0, 0.45),
+      0 0 30px rgba(216, 170, 53, 0.16);
+  }
+  /* Partículas com drift MUITO sutil (poeira de tesouro). Desliga em
+     prefers-reduced-motion (bloco no fim do arquivo). */
+  .pirate-particles--drift {
+    animation: pirate-drift 16s ease-in-out infinite;
+    will-change: transform;
+  }
+
   /* ----- Bottom navigation (mobile) ----- */
   :root {
     --bottom-nav-h: calc(3.75rem + env(safe-area-inset-bottom));
@@ -607,6 +662,19 @@
   100% { opacity: 1; }
 }
 
+/* Drift sutil das partículas douradas (poeira de tesouro flutuando). */
+@keyframes pirate-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @keyframes cryptex-shake {
   0%,
   100% {
@@ -627,7 +695,8 @@
   .floaty,
   .soft-pulse,
   .cryptex-shake,
-  .fan-in {
+  .fan-in,
+  .pirate-particles--drift {
     animation: none !important;
   }
   .reveal {

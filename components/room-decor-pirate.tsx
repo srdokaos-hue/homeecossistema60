@@ -23,33 +23,62 @@ export function RoomDecorPirate({ assetsDir }: { assetsDir: string }) {
           aqui é md:hidden pra não dobrar. Caminhos vêm de `assetsDir` (data),
           não hardcoded. Estáticos (sem movimento → nada a fazer p/ reduced-motion). */}
       <div className="pirate-decor md:hidden" aria-hidden="true">
-        {/* moedas discretas no canto inferior do hero */}
+        {/* PARTÍCULAS AMBIENTE — poeira de tesouro espalhada pelo miolo da página
+            (topo já tem a camada sempre-on abaixo). Opacidade baixa, blend screen
+            pra brilhar sobre o cenário, drift muito sutil (desliga em
+            reduced-motion). Ancorada em % pra acompanhar o tamanho da página. */}
         <div
-          className="pirate-coins-sparse"
+          className="pirate-particles pirate-particles--drift"
           style={{
-            top: 300,
-            right: "4%",
-            width: 116,
-            height: 78,
-            opacity: 0.4,
-            transform: "rotate(7deg)",
-            backgroundImage: `url('${assetsDir}/coins-sparse.webp')`,
-            filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.45))",
+            top: "30%",
+            left: 0,
+            right: 0,
+            height: "46%",
+            opacity: 0.26,
+            mixBlendMode: "screen",
+            backgroundImage: `url('${assetsDir}/golden-particles.webp')`,
           }}
         />
-        {/* uma gaivota pequena no topo */}
+
+        {/* GAIVOTAS — espalhadas em profundidade: topo, meio e parte baixa.
+            Tamanhos/opacidades variados (mais perto = maior/nítida). */}
         <div
           className="pirate-seagull"
           style={{
             top: 38,
             left: "8%",
-            width: 46,
-            height: 35,
-            opacity: 0.5,
+            width: 50,
+            height: 38,
+            opacity: 0.55,
             backgroundImage: `url('${assetsDir}/seagull-01.webp')`,
             filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.32))",
           }}
         />
+        <div
+          className="pirate-seagull"
+          style={{
+            top: "41%",
+            right: "9%",
+            width: 36,
+            height: 27,
+            opacity: 0.38,
+            backgroundImage: `url('${assetsDir}/seagull-02.webp')`,
+            filter: "blur(0.5px) drop-shadow(0 4px 7px rgba(0,0,0,0.3))",
+          }}
+        />
+        <div
+          className="pirate-seagull"
+          style={{
+            top: "67%",
+            left: "11%",
+            width: 42,
+            height: 32,
+            opacity: 0.42,
+            backgroundImage: `url('${assetsDir}/seagull-03.webp')`,
+            filter: "blur(0.3px) drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
+          }}
+        />
+
         {/* chapéu de palha sutil perto do bloco do título */}
         <div
           className="pirate-hat"
@@ -64,18 +93,63 @@ export function RoomDecorPirate({ assetsDir }: { assetsDir: string }) {
             filter: "drop-shadow(0 8px 14px rgba(0,0,0,0.4))",
           }}
         />
-        {/* âncora bem discreta lá embaixo */}
+
+        {/* MOEDAS — grupos em cantos diferentes, escala/opacidade variadas pra
+            dar camada. coins-sparse perto do hero, coins-dense no miolo e perto
+            do rodapé (mais sutil/desfocada = mais ao fundo). */}
+        <div
+          className="pirate-coins-sparse"
+          style={{
+            top: 300,
+            right: "4%",
+            width: 116,
+            height: 78,
+            opacity: 0.42,
+            transform: "rotate(7deg)",
+            backgroundImage: `url('${assetsDir}/coins-sparse.webp')`,
+            filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.45))",
+          }}
+        />
+        <div
+          className="pirate-coins-dense"
+          style={{
+            top: "49%",
+            left: "4%",
+            width: 118,
+            height: 79,
+            opacity: 0.32,
+            transform: "rotate(-8deg)",
+            backgroundImage: `url('${assetsDir}/coins-dense.webp')`,
+            filter: "blur(0.6px) drop-shadow(0 8px 16px rgba(0,0,0,0.42))",
+          }}
+        />
+        <div
+          className="pirate-coins-dense"
+          style={{
+            bottom: 96,
+            left: "7%",
+            width: 88,
+            height: 59,
+            opacity: 0.3,
+            transform: "rotate(11deg)",
+            backgroundImage: `url('${assetsDir}/coins-dense.webp')`,
+            filter: "blur(0.4px) drop-shadow(0 6px 12px rgba(0,0,0,0.4))",
+          }}
+        />
+
+        {/* âncora náutica discreta lá embaixo, canto oposto às moedas do rodapé */}
         <div
           className="pirate-anchor"
           style={{
-            bottom: 120,
+            bottom: 130,
             right: "6%",
-            width: 70,
-            height: 110,
-            opacity: 0.28,
+            width: 72,
+            height: 113,
+            opacity: 0.3,
             transform: "rotate(6deg)",
             backgroundImage: `url('${assetsDir}/anchor.webp')`,
-            filter: "blur(0.3px) drop-shadow(0 10px 18px rgba(0,0,0,0.45))",
+            filter:
+              "blur(0.3px) drop-shadow(0 10px 18px rgba(0,0,0,0.45)) drop-shadow(0 0 12px rgba(216,170,53,0.12))",
           }}
         />
       </div>
