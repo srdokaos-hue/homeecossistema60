@@ -467,8 +467,8 @@
       drop-shadow(0 0 11px rgba(216, 170, 53, 0.28));
   }
   .pirate-chest {
-    width: 188px;
-    aspect-ratio: 520 / 300;
+    width: 158px;
+    aspect-ratio: 560 / 526;
     background-repeat: no-repeat;
     background-size: contain;
     opacity: 0.95;
