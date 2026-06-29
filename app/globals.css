@@ -449,14 +449,17 @@
      não na camada absoluta. background-image vem do tema (inline style). */
   .pirate-hat-hero {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    /* ABAIXO da fileira de tags (que ocupa o topo), encostado à direita: no
+       mobile não cabe ao lado da tag "Livre" sem cobri-la, então desce um pouco
+       e fica no canto superior-direito, sobre o céu/vela. */
+    top: 62px;
+    right: 12px;
     z-index: 2;
-    width: 92px;
+    width: 84px;
     aspect-ratio: 520 / 347;
     background-repeat: no-repeat;
     background-size: contain;
-    transform: rotate(8deg);
+    transform: rotate(6deg);
     opacity: 0.92;
     pointer-events: none;
     filter:
@@ -474,7 +477,7 @@
       drop-shadow(0 0 16px rgba(216, 170, 53, 0.22));
   }
   .pirate-anchor-inline {
-    width: 60px;
+    width: 50px;
     aspect-ratio: 604 / 943;
     background-repeat: no-repeat;
     background-size: contain;

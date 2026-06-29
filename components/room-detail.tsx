@@ -424,10 +424,11 @@ export function RoomDetail({ room }: { room: Room }) {
             </p>
 
             {/* ÂNCORA — flourish náutico decorativo abaixo do regulamento, fecha o
-                conteúdo antes de "Você Também Pode Curtir" (só Ilha, só mobile). */}
+                conteúdo antes de "Você Também Pode Curtir" (só Ilha, só mobile).
+                Encostada à direita (não centralizada) e em tamanho contido. */}
             {isPirate && assetsDir && (
               <div
-                className="pointer-events-none flex justify-center lg:hidden"
+                className="pointer-events-none flex justify-end pr-5 lg:hidden"
                 aria-hidden="true"
               >
                 <div
