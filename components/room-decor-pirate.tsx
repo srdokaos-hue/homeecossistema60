@@ -23,20 +23,47 @@ export function RoomDecorPirate({ assetsDir }: { assetsDir: string }) {
           aqui é md:hidden pra não dobrar. Caminhos vêm de `assetsDir` (data),
           não hardcoded. Estáticos (sem movimento → nada a fazer p/ reduced-motion). */}
       <div className="pirate-decor md:hidden" aria-hidden="true">
-        {/* PARTÍCULAS AMBIENTE — poeira de tesouro espalhada pelo miolo da página
-            (topo já tem a camada sempre-on abaixo). Opacidade baixa, blend screen
-            pra brilhar sobre o cenário, drift muito sutil (desliga em
-            reduced-motion). Ancorada em % pra acompanhar o tamanho da página. */}
+        {/* POEIRA DE TESOURO — partículas douradas espalhadas por TODA a página
+            (tiles repetidos, não concentradas num canto). Blend screen pra
+            cintilar sobre o cenário e reviver a metade inferior (antes teal morto).
+            Opacidade baixa = delicado. Drift muito sutil (desliga em reduced-motion). */}
         <div
-          className="pirate-particles pirate-particles--drift"
+          className="pirate-particles pirate-particles--field pirate-particles--drift"
           style={{
-            top: "30%",
-            left: 0,
-            right: 0,
-            height: "46%",
-            opacity: 0.26,
+            inset: 0,
+            opacity: 0.34,
             mixBlendMode: "screen",
             backgroundImage: `url('${assetsDir}/golden-particles.webp')`,
+          }}
+        />
+
+        {/* LUZ DOURADA AMBIENTE — dois washes radiais suaves (screen) mantêm a
+            página viva/quente de cima a baixo, inclusive na metade inferior. Ficam
+            atrás dos painéis, então não atrapalham a leitura do texto. */}
+        <div
+          style={{
+            position: "absolute",
+            top: "4%",
+            left: "-12%",
+            right: "-12%",
+            height: "42%",
+            pointerEvents: "none",
+            mixBlendMode: "screen",
+            background:
+              "radial-gradient(58% 60% at 52% 28%, rgba(245,200,90,0.18), transparent 70%)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "-16%",
+            right: "-16%",
+            height: "50%",
+            pointerEvents: "none",
+            mixBlendMode: "screen",
+            background:
+              "radial-gradient(60% 55% at 50% 46%, rgba(216,170,53,0.15), transparent 72%)",
           }}
         />
 
@@ -79,79 +106,11 @@ export function RoomDecorPirate({ assetsDir }: { assetsDir: string }) {
           }}
         />
 
-        {/* chapéu de palha sutil perto do bloco do título */}
-        <div
-          className="pirate-hat"
-          style={{
-            top: 250,
-            left: "5%",
-            width: 96,
-            height: 72,
-            opacity: 0.34,
-            transform: "rotate(-10deg)",
-            backgroundImage: `url('${assetsDir}/straw-hat.webp')`,
-            filter: "drop-shadow(0 8px 14px rgba(0,0,0,0.4))",
-          }}
-        />
-
-        {/* MOEDAS — grupos em cantos diferentes, escala/opacidade variadas pra
-            dar camada. coins-sparse perto do hero, coins-dense no miolo e perto
-            do rodapé (mais sutil/desfocada = mais ao fundo). */}
-        <div
-          className="pirate-coins-sparse"
-          style={{
-            top: 300,
-            right: "4%",
-            width: 116,
-            height: 78,
-            opacity: 0.42,
-            transform: "rotate(7deg)",
-            backgroundImage: `url('${assetsDir}/coins-sparse.webp')`,
-            filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.45))",
-          }}
-        />
-        <div
-          className="pirate-coins-dense"
-          style={{
-            top: "49%",
-            left: "4%",
-            width: 118,
-            height: 79,
-            opacity: 0.32,
-            transform: "rotate(-8deg)",
-            backgroundImage: `url('${assetsDir}/coins-dense.webp')`,
-            filter: "blur(0.6px) drop-shadow(0 8px 16px rgba(0,0,0,0.42))",
-          }}
-        />
-        <div
-          className="pirate-coins-dense"
-          style={{
-            bottom: 96,
-            left: "7%",
-            width: 88,
-            height: 59,
-            opacity: 0.3,
-            transform: "rotate(11deg)",
-            backgroundImage: `url('${assetsDir}/coins-dense.webp')`,
-            filter: "blur(0.4px) drop-shadow(0 6px 12px rgba(0,0,0,0.4))",
-          }}
-        />
-
-        {/* âncora náutica discreta lá embaixo, canto oposto às moedas do rodapé */}
-        <div
-          className="pirate-anchor"
-          style={{
-            bottom: 130,
-            right: "6%",
-            width: 72,
-            height: 113,
-            opacity: 0.3,
-            transform: "rotate(6deg)",
-            backgroundImage: `url('${assetsDir}/anchor.webp')`,
-            filter:
-              "blur(0.3px) drop-shadow(0 10px 18px rgba(0,0,0,0.45)) drop-shadow(0 0 12px rgba(216,170,53,0.12))",
-          }}
-        />
+        {/* Chapéu, âncora e baú do tesouro NÃO ficam aqui no mobile: o chapéu vai
+            pro topo do hero, a âncora pro fim do conteúdo (abaixo do regulamento) e
+            o baú entre o seletor de unidade e a galeria — todos posicionados no
+            fluxo em room-detail.tsx, pra ancorarem em pontos exatos do conteúdo.
+            Moedas removidas do mobile (ficaram ruins). */}
       </div>
 
       {/* CAMADA TRASEIRA — atrás dos painéis */}

@@ -131,6 +131,17 @@ export function RoomDetail({ room }: { room: Room }) {
                 aria-hidden="true"
               />
 
+              {/* CHAPÉU DO LUFFY — decorativo no topo-direito do hero (só Ilha,
+                  só mobile). Canto livre na Ilha (badge topo-dir. é só Cativeiro).
+                  Some no desktop, lá vale o chapéu flutuante da camada xl. */}
+              {isPirate && assetsDir && (
+                <div
+                  className="pirate-hat-hero lg:hidden"
+                  aria-hidden="true"
+                  style={{ backgroundImage: `url('${assetsDir}/straw-hat.webp')` }}
+                />
+              )}
+
               {/* tags topo-esquerda */}
               <div className="absolute left-4 top-4 flex flex-wrap gap-2">
                 {heroTags.map((t) => (
@@ -215,6 +226,22 @@ export function RoomDetail({ room }: { room: Room }) {
             {/* RESERVA (mobile): seletor de unidade inline + barra fixa no rodapé.
                 Some no desktop (lá vale a sidebar sticky). */}
             <RoomReserveMobile room={room} />
+
+            {/* BAÚ DO TESOURO — decorativo médio, à direita, na faixa entre o
+                seletor de unidade e a galeria (só Ilha, só mobile). Fica no gap
+                entre seções (sem texto), então pode aparecer nítido. Margens
+                negativas comem parte do gap pra ele nestar entre os dois blocos. */}
+            {isPirate && assetsDir && (
+              <div
+                className="pointer-events-none -my-2 flex justify-end lg:hidden"
+                aria-hidden="true"
+              >
+                <div
+                  className="pirate-chest"
+                  style={{ backgroundImage: `url('${assetsDir}/treasure-chest.webp')` }}
+                />
+              </div>
+            )}
 
             {/* GALERIA */}
             <section className="glass-panel glass-strong rounded-2xl p-5">
@@ -395,6 +422,20 @@ export function RoomDetail({ room }: { room: Room }) {
                 Ver regulamento do jogo
               </a>
             </p>
+
+            {/* ÂNCORA — flourish náutico decorativo abaixo do regulamento, fecha o
+                conteúdo antes de "Você Também Pode Curtir" (só Ilha, só mobile). */}
+            {isPirate && assetsDir && (
+              <div
+                className="pointer-events-none flex justify-center lg:hidden"
+                aria-hidden="true"
+              >
+                <div
+                  className="pirate-anchor-inline"
+                  style={{ backgroundImage: `url('${assetsDir}/anchor.webp')` }}
+                />
+              </div>
+            )}
           </div>
 
           {/* SIDEBAR DE RESERVA (só desktop) */}
