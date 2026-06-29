@@ -227,24 +227,18 @@ export function RoomDetail({ room }: { room: Room }) {
                 Some no desktop (lá vale a sidebar sticky). */}
             <RoomReserveMobile room={room} />
 
-            {/* BAÚ DO TESOURO — decorativo médio, à direita, na faixa entre o
-                seletor de unidade e a galeria (só Ilha, só mobile). Fica no gap
-                entre seções (sem texto), então pode aparecer nítido. Margens
-                negativas comem parte do gap pra ele nestar entre os dois blocos. */}
-            {isPirate && assetsDir && (
-              <div
-                className="pointer-events-none -my-2 flex justify-end lg:hidden"
-                aria-hidden="true"
-              >
+            {/* GALERIA */}
+            <section className="glass-panel glass-strong relative isolate rounded-2xl p-5">
+              {/* BAÚ DO TESOURO — sobreposto à borda SUPERIOR do card (parte sobre
+                  o topo, parte pra fora) pra dar profundidade. z-index abaixo do
+                  texto e acima do fundo/borda do card (só Ilha, só mobile). */}
+              {isPirate && assetsDir && (
                 <div
-                  className="pirate-chest"
+                  className="pirate-chest lg:hidden"
+                  aria-hidden="true"
                   style={{ backgroundImage: `url('${assetsDir}/treasure-chest.webp')` }}
                 />
-              </div>
-            )}
-
-            {/* GALERIA */}
-            <section className="glass-panel glass-strong rounded-2xl p-5">
+              )}
               <h2 className="font-display text-[22px] text-white">
                 Galeria do <span className="text-[var(--color-gold)]">Ambiente</span>
               </h2>
@@ -422,21 +416,6 @@ export function RoomDetail({ room }: { room: Room }) {
                 Ver regulamento do jogo
               </a>
             </p>
-
-            {/* ÂNCORA — flourish náutico decorativo abaixo do regulamento, fecha o
-                conteúdo antes de "Você Também Pode Curtir" (só Ilha, só mobile).
-                Encostada à direita (não centralizada) e em tamanho contido. */}
-            {isPirate && assetsDir && (
-              <div
-                className="pointer-events-none flex justify-end pr-5 lg:hidden"
-                aria-hidden="true"
-              >
-                <div
-                  className="pirate-anchor-inline"
-                  style={{ backgroundImage: `url('${assetsDir}/anchor.webp')` }}
-                />
-              </div>
-            )}
           </div>
 
           {/* SIDEBAR DE RESERVA (só desktop) */}
@@ -462,7 +441,21 @@ export function RoomDetail({ room }: { room: Room }) {
                 Ver todas as salas →
               </Link>
             </div>
-            <RelatedRoomsCarousel rooms={relatedRooms} />
+            {/* wrapper relativo só pra ancorar a âncora decorativa sobre o topo do
+                carrossel (mobile). Sem overflow → a parte que sobe aparece. */}
+            <div className="relative">
+              {/* ÂNCORA — sobreposta à borda SUPERIOR-direita do primeiro card de
+                  recomendação: parte sobre o card, parte pra fora no topo (efeito
+                  de profundidade). pointer-events:none (só Ilha, só mobile). */}
+              {isPirate && assetsDir && (
+                <div
+                  className="pirate-anchor-inline lg:hidden"
+                  aria-hidden="true"
+                  style={{ backgroundImage: `url('${assetsDir}/anchor.webp')` }}
+                />
+              )}
+              <RelatedRoomsCarousel rooms={relatedRooms} />
+            </div>
           </section>
         )}
       </div>
