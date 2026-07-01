@@ -490,7 +490,7 @@
   .pirate-anchor-inline {
     position: absolute;
     top: -50px;
-    right: 18px;
+    right: 50px;
     z-index: 5;
     width: 66px;
     aspect-ratio: 604 / 943;
@@ -498,8 +498,8 @@
     background-size: contain;
     pointer-events: none;
     opacity: 0.6;
-    /* inclinada na diagonal, meio deitada (anel pro canto sup-direito) */
-    transform: rotate(32deg);
+    /* inclinada na diagonal (leve), sobre o topo-direito do 1º card */
+    transform: rotate(20deg);
     filter:
       drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45))
       drop-shadow(0 0 12px rgba(216, 170, 53, 0.16));
